@@ -21,7 +21,7 @@ const Header = () => {
         boxShadow: "none",
         }}
     >
-      <Toolbar sx = {{ display: 'flex', justifyContent: 'space-between', paddingTop: '13px'}}>
+      <Toolbar sx = {{ display: 'flex', justifyContent: 'center', paddingTop: '13px'}}>
           <Button
             component = {Link}
             to = "/profile"
@@ -39,22 +39,43 @@ const Header = () => {
               background: 'rgb(0, 0, 0)',
               boxShadow: '0 0 25px rgb(0, 0, 0)',
               '&:hover': {
-                boxShadow: '0 0 5px rgb(0, 140, 255), 00 00px rgb(0, 255, 26), 0 0 50px rgb(0,140,255), 0 0 100px rgb(0,140,255)'
+                boxShadow: '0 0 5px rgb(0, 140, 255), 0 0 0px rgb(0, 255, 26), 0 0 50px rgb(0,140,255), 0 0 100px rgb(0,140,255)'
               },
             }}
-          >
-            Profile
-          </Button>
+          >Profile</Button>
           <Typography 
             variant = "h6" 
             component = "div" 
             sx = {{ 
-              flexGrow: 1, display: 'flex', justifyContent: 'center'
+              flexGrow: 1,
+              textAlign: 'center',
+              marginLeft: 'auto',
+              marginright: 'auto',
+              display: 'flex', 
+              justifyContent: 'center'
             }}
-          >
-              GymBuddy
-          </Typography>
-          <Button color = "inherit">Login</Button>
+          >GymBuddy</Typography>
+          <Button 
+            color = "inherit"
+            sx = {{
+              marginRight: 'auto',
+              justifyContent: 'right',
+              padding: '10px 20px',
+              border: 'none',
+              fontSize: '17px',
+              color: '#fff',
+              borderRadius: '7px',
+              letterSpacing: '4px',
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              transition: 'box-shadow 0.5s',
+              background: 'rgb(0, 0, 0)',
+              boxShadow: '0 0 25px rgb(0, 0, 0)',
+              '&:hover': {
+                boxShadow: '0 0 5px rgb(0, 140, 255), 00 00px rgb(0, 255, 26), 0 0 50px rgb(0,140,255), 0 0 100px rgb(0,140,255)'
+              },
+            }}
+          >Log in</Button>
       </Toolbar>
     </AppBar>
   );
