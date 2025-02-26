@@ -5,6 +5,11 @@
   text-align: center;
 }
 
+/* Added this line in case background color does not render */
+body {
+  background-color: #333 !important;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;
