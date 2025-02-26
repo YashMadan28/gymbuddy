@@ -11,69 +11,52 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 
 const Header = () => {
-  const [open, setOpen] = useState(false);
-
-  const toggleDrawer = (isOpen) => (event) => {
-    setOpen(isOpen);
-  };
-
-  const drawerContent = (
-    <div
-      role = "presentation"
-      onClick = {toggleDrawer(false)}
-      onKeyDown = {toggleDrawer(false)}
-      style = {{ width: 250 }}
-      >
-        <List>
-          <ListItem button component = {Link} to = "/profile">Profile</ListItem>
-          <ListItem button>Messages</ListItem>
-          <ListItem button>Page Item 3</ListItem>
-        </List>
-      </div>
-  );
   return (
-    <>
-    <AppBar position = "static" sx = {{ 
-        width: '80vw', 
+    <AppBar 
+      position = "fixed" 
+      sx = {{ 
+        width: '100%', 
         backgroundColor: 'black', 
-        height: '90px'
-        }}>
-        <Toolbar sx = {{ display: 'flex', justifyContent: 'center', paddingTop: '13px'}}>
-            <IconButton 
-            edge = "start"
+        height: '90px',
+        boxShadow: "none",
+        }}
+    >
+      <Toolbar sx = {{ display: 'flex', justifyContent: 'space-between', paddingTop: '13px'}}>
+          <Button
+            component = {Link}
+            to = "/profile"
             color = "inherit"
-            aria-label = "menu"
-            onClick = { toggleDrawer(true) }
             sx = {{
-                padding: '10px 20px',
-                border: 'none',
-                fontSize: '17px',
-                color: '#fff',
-                borderRadius: '7px',
-                letterSpacing: '4px',
-                fontWeight: 700, 
-                textTransform: 'uppercase',
-                transition: 'box-shadow 0.5',
-                background: 'rgb(0, 0, 0)',
-                boxShadow: '0 0 25px rgb(0, 0, 0)',
-                '&:hover': {
-                  boxShadow: '0 0 5px rgb(0,140,255), 0 0 25px rgb(0,140,255), 0 0 50px rgb(0,140,255), 0 0 100px rgb(0,140,255)',
-                },
+              padding: '10px 20px',
+              border: 'none',
+              fontSize: '17px',
+              color: '#fff',
+              borderRadius: '7px',
+              letterSpacing: '4px',
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              transition: 'box-shadow 0.5s',
+              background: 'rgb(0, 0, 0)',
+              boxShadow: '0 0 25px rgb(0, 0, 0)',
+              '&:hover': {
+                boxShadow: '0 0 5px rgb(0, 140, 255), 00 00px rgb(0, 255, 26), 0 0 50px rgb(0,140,255), 0 0 100px rgb(0,140,255)'
+              },
             }}
-            >
-                <MenuIcon />
-            </IconButton>
-            <Typography variant = "h6" component = "div" sx = {{ flexGrow: 1, display: 'flex', justifyContent: 'center'}}>
-                GymBuddy
-            </Typography>
-            <Button color = "inherit">Login</Button>
-        </Toolbar>
+          >
+            Profile
+          </Button>
+          <Typography 
+            variant = "h6" 
+            component = "div" 
+            sx = {{ 
+              flexGrow: 1, display: 'flex', justifyContent: 'center'
+            }}
+          >
+              GymBuddy
+          </Typography>
+          <Button color = "inherit">Login</Button>
+      </Toolbar>
     </AppBar>
-        
-    <Drawer anchor = "left" open = {open} onClose = {toggleDrawer(false)}>
-        {drawerContent}
-    </Drawer>
-    </>
   );
 };
 
