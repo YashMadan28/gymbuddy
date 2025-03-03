@@ -18,11 +18,10 @@ const MainPage = () => {
         <h1 className="static-text">Ready to meet your workout partner?</h1>
       </div>
       <div className="image-container">
-        <img src="/path-to-your-image.jpg" alt="Workout partners" />
+        <img src="/src/assests.home page.jpg" alt="Workout partners" />
       </div>
     </div>
   );
 };
 
-export default MainPage;
-
+export default MainPage
