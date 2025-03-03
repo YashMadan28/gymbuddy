@@ -9,7 +9,6 @@ createRoot(document.getElementById('root')).render(
   </StrictMode>,
 )*/
 import React from 'react';
-import Footer from './Footer';
 import './index.css';
 
 const MainPage = () => {
