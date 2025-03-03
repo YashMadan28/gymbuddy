@@ -1,0 +1,19 @@
+.image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile-image {
+    width: 250px;          /* Set a larger width */
+    height: 250px;         /* Set a larger height */
+    object-fit: cover;     /* Ensures the image covers the container while preserving its aspect ratio */
+    border-radius: 50%;    /* Makes the image circular */
+    border: 5px solid black;
+    margin-top: 50px;
+}
+
+.profile-title{
+    font-size: 36px;
+    font-weight: 600;
+}
