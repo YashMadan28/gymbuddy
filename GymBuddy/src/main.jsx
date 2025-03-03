@@ -10,22 +10,20 @@ createRoot(document.getElementById('root')).render(
 )*/
 import React from 'react';
 import Footer from './Footer';
-import Typing from 'react-typing-animation';
-import './index.css'; // Import the CSS file for styling
+import './index.css';
 
 const MainPage = () => {
   return (
     <div className="main-container">
       <div className="text-container">
-        <Typing speed={100}>
-          <h1 className="typing-text">Ready to meet your workout partner?</h1>
-        </Typing>
+        <h1 className="static-text">Ready to meet your workout partner?</h1>
       </div>
       <div className="image-container">
-        <img src="/src/assests/home page.jpg" alt="Workout partners" />
+        <img src="/path-to-your-image.jpg" alt="Workout partners" />
       </div>
     </div>
   );
 };
 
 export default MainPage;
+
