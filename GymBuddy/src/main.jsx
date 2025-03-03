@@ -11,7 +11,7 @@ createRoot(document.getElementById('root')).render(
 import React from 'react';
 import Footer from './Footer';
 import Typing from 'react-typing-animation';
-import './MainPage.css'; // Import the CSS file for styling
+import './index.css'; // Import the CSS file for styling
 
 const MainPage = () => {
   return (
