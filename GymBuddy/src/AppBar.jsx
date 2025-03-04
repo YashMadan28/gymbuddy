@@ -149,7 +149,7 @@ const Header = () => {
 
         {/* LOGIN BUTTON WITH NAVIGATION */}
         <Button 
-          onClick={() => navigate('/login')} // Navigate to login page
+          onClick={() => navigate('/Login')} // Navigate to login page
           sx={{
             marginRight: 'auto',
             justifyContent: 'right',
