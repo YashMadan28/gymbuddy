@@ -28,10 +28,13 @@ const Login = () => {
 export default Login;*/
 import React from 'react';
 import { Container, TextField, Button, Typography, Box, Paper } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
+    const navigate = useNavigate(); // Use React Router for navigation
+
     const handleLogin = () => {
-        window.location.href = "/index.html"; // Redirects to index.html
+        navigate("/"); // Redirects to MainPage ("/")
     };
 
     return (
