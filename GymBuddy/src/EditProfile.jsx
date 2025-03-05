@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import default_image from './assets/default_image.jpg';
 import './EditProfile.css';
 
-
 const EditProfile = ({ profileData, setProfileData }) => {
     const fileInputRef = useRef(null);
 
@@ -36,7 +35,7 @@ const EditProfile = ({ profileData, setProfileData }) => {
 
     return (
         <Box sx = {{ 
-                justifyContent: 'center',
+                justifyContent: 'center', 
                 maxWidth: 500, 
                 margin: 'auto',
                 marginTop: '0px',

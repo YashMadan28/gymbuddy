@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import default_image from './assets/default_image.jpg';
 import './EditProfile.css';
 
-
 const Profile = ({ profileData }) => {
 
     const navigate = useNavigate();
@@ -13,13 +12,12 @@ const Profile = ({ profileData }) => {
     return (
         <Box sx = {{ 
                 justifyContent: 'center', 
-                maxWidth: 600, 
+                maxWidth: 500, 
                 margin: 'auto',
                 marginTop: '0px',
-                padding: 5,
+                backgroundColor: 'white', 
+                padding: 3
             }}>
-            <br />
-            <br />
             <h2>Your Profile</h2>
             <Button variant = "contained"
             color = "primary"
