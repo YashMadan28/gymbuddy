@@ -158,7 +158,7 @@ import React, { useRef, useState } from 'react';
 import { TextField, Button, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import default_image from './assets/default_image.jpg';
-import { db } from "../firebase"; // Ensure firebase.js is correctly configured
+import { db } from "./firebase"; // Ensure firebase.js is correctly configured
 import { doc, setDoc } from "firebase/firestore"; // Import required Firestore functions
 import { useAuth } from '../context/AuthContext'; // If you have an authentication context to track users
 
