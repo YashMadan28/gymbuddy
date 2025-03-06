@@ -7,10 +7,6 @@ import default_image from './assets/default_image.jpg';*/
 import React, { useRef, useState } from 'react';
 import { TextField, Button, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { getAuth } from 'firebase/auth';
-import { db, storage } from './firebase'; // Import Firestore & Storage
-import { doc, setDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import default_image from './assets/default_image.jpg';
 
 const EditProfile = () => {
