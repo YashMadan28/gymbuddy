@@ -47,6 +47,9 @@ const Header = () => {
             variant = "h6" 
             component = "div" 
             sx = {{ 
+              fontSize: '30px',
+              fontStyle: 'normal',
+              fontFamily: 'Courier',
               flexGrow: 1,
               textAlign: 'center',
               marginLeft: 'auto',

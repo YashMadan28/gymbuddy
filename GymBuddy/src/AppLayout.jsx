@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Footer from './Footer';
-import AppBar from './AppBar'
+import AppBar from './AppBar';
 
 
 const AppLayout = () => {
@@ -12,7 +12,7 @@ const AppLayout = () => {
 
   return (
     <div>
-      <AppBar /> {AppBar} 
+      <AppBar />  
       <Outlet />
       {showFooter && <Footer />}
     </div>

@@ -1,18 +1,13 @@
 import React, { useRef, useState } from 'react';
 import { TextField, Button, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import './EditProfile.css';
-import './Profile';
 import default_image from './assets/default_image.jpg';
+import './EditProfile.css';
 
-
-const EditProfile = () => {
+const EditProfile = ({ profileData, setProfileData }) => {
     const fileInputRef = useRef(null);
+
     const [file, setFile] = useState(null);
-    const [name, setName] = useState('');
-    const [age, setAge] = useState('');
-    const [gender, setGender] = useState('');
-    const [about, setAbout] = useState('');
 
     const handleButtonClick = () => {
         fileInputRef.current.click(); // Triggers the file input click
@@ -21,16 +16,22 @@ const EditProfile = () => {
     const handlePictureChange = (event) => {
         const selectedFile = event.target.files[0];
         if (selectedFile) {
-            setFile(URL.createObjectURL(selectedFile)); // Preview image
+            setFile(selectedFile);
+            setProfileData((prevData) => ({
+                ...prevData,
+                image: selectedFile,
+            }));
         }
     };
 
-    const navigate = useNavigate();
+    const handleInputChange = (field, value) => {
+        setProfileData((prevData) => ({
+            ...prevData,
+            [field]: value,
+        }));
+    };
 
-    const handleNameChange = (event) => setName(event.target.value);
-    const handleAgeChange = (event) => setAge(event.target.value);
-    const handleGenderChange = (event) => setGender(event.target.value);
-    const handleAboutChange = (event) => setAbout(event.target.value);
+    const navigate = useNavigate();
 
     return (
         <Box sx = {{ 
@@ -39,22 +40,24 @@ const EditProfile = () => {
                 margin: 'auto',
                 marginTop: '0px',
                 backgroundColor: 'white', 
-                padding: 3
+                padding: 3,
+                alignItems: 'center',
+                boxSizing: 'border-box'
             }}>
-                <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handlePictureChange}
-                    style={{ display: "none" }} // Hides the input
+            <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handlePictureChange}
+                style={{ display: "none" }} // Hides the input
+            />
+            <div className="image-container">
+                {/* Use default image if 'file' is null */}
+                <img 
+                    src={profileData.image || default_image} 
+                    alt="Preview" 
+                    className="profile-image" 
                 />
-                <div className="image-container">
-                    {/* Use default image if 'file' is null */}
-                    <img 
-                        src={file || default_image} 
-                        alt="Preview" 
-                        className="profile-image" 
-                    />
-                </div>
+            </div>
             <Button
                 variant="contained"
                 color="primary"
@@ -80,8 +83,8 @@ const EditProfile = () => {
                 variant = "outlined"
                 fullWidth
                 margin = "normal"
-                value = {name}
-                onChange = {handleNameChange}
+                value = {profileData.name}
+                onChange = {(e) => handleInputChange('name', e.target.value)}
                 sx = {{
                     '& .MuiInputBase-input::placeholder': {
                         color: 'white',
@@ -95,8 +98,8 @@ const EditProfile = () => {
                 variant = "outlined"
                 fullWidth
                 margin = "normal"
-                value = {age}
-                onChange = {handleAgeChange}
+                value = {profileData.age}
+                onChange = {(e) => handleInputChange('age', e.target.value)}
                 sx = {{
                     '& .MuiInputBase-input::placeholder': {
                         color: 'white',
@@ -110,8 +113,8 @@ const EditProfile = () => {
                 variant = "outlined"
                 fullWidth
                 margin = "normal"
-                value = {gender}
-                onChange = {handleGenderChange}
+                value = {profileData.gender}
+                onChange = {(e) => handleInputChange('gender', e.target.value)}
                 sx = {{
                     '& .MuiInputBase-input::placeholder': {
                         color: 'white',
@@ -125,8 +128,8 @@ const EditProfile = () => {
                 variant = "outlined"
                 fullWidth
                 margin = "normal"
-                value = {about}
-                onChange = {handleAboutChange}
+                value = {profileData.about}
+                onChange = {(e) => handleInputChange('about', e.target.value)}
                 sx = {{
                     '& .MuiInputBase-input::placeholder': {
                         color: 'white',
@@ -139,7 +142,7 @@ const EditProfile = () => {
                 variant = "contained"
                 color = "primary"
                 sx = {{ marginTop: 2 }}
-                onClick = {() => alert('Profile Updated!')}
+                onClick = {() => navigate('/profile')}
             >
                 Save Changes
             </Button>
