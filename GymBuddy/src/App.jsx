@@ -1,45 +1,59 @@
-import { useState } from 'react'
+import { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import AppBar from './AppBar';
+import './App.css';
+import AppLayout from './AppLayout';
 import Profile from './Profile';
-import { Link } from "react-router-dom";
+import EditProfile from './EditProfile';
+import MainPage from './MainPage';
+import Login from './Login';
+import FindGymBuddy from './FindGymBuddy';
+import Matches from './Matches';
+import WorkoutLibrary from './WorkoutLibrary';
 
 
-function App() {
+const App = () => {
+  const[profileData, setProfileData] = useState({
+    name: '',
+    age: '',
+    gender: '',
+    about: '',
+    image: null,
+  });
 
   return (
     <Router>
-      <AppBar/> {AppBar}
       <Routes>
-        <Route path = "/" element = {
-          <>
-            <div>
-              <a href="https://vite.dev" target="_blank">
-                <img src={viteLogo} className="logo" alt="Vite logo" />
-              </a>
-              <a href="https://react.dev" target="_blank">
-                <img src={reactLogo} className="logo react" alt="React logo" />
-              </a>
-            </div>
-            <h1>
-              Vite + React
-            </h1>
-          </>
-        } />
-        <Route path = "/profile" element = {<Profile />} />
+        <Route element = {<AppLayout />}>
+        <Route path = "/" 
+          element = { <MainPage />} />
+        <Route path = "/profile" 
+          element = {<Profile profileData={profileData}/>} />
+        <Route path= "/profile/edit" 
+          element={
+            <EditProfile 
+              profileData={profileData}
+              setProfileData={setProfileData}
+            />
+          } 
+        />
+        <Route path = "/login" 
+          element = {<Login />} />
+        <Route path = "/findgymbuddy" 
+          element = {<FindGymBuddy/>} />
+          <Route path = "/matches" 
+          element = {<Matches/>} />
+        {/*<Route path = "/messages" element = {<Messages />} />*/}
+        {/*<Route path = "/stats" element = {<Stats />} />*/}
+        {/*<Route path = "/Schedule" element = {<Schedule />} />*/}
+        <Route path = "/workout_library" element = {<WorkoutLibrary />} />
+          {/*<Route index element = {<WorkoutLibrary />} />*/}
+          {/*<Route path = "splits" element = {<SplitView />} />
+          <Route path = "muscle-groups" element = {<MuscleGroupView />} />*/}
+          {/*</Route>*/}
+        </Route>
       </Routes>
-
-      <footer className = "footer">
-        <button>Messages</button>
-        <button>Stats</button>
-        <button>Schedule</button>
-        <button>Workout Library</button>
-      </footer>
     </Router>
   );
 }
 
-export default App
+export default App;
