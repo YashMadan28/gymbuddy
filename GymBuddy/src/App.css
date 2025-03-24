@@ -15,14 +15,21 @@ bottom: 0;
 left: 0;
 width: 100%;
 background-color: #f8f9fa;
-padding: 0px 0;
+padding: 0;
 display: flex;
 justify-content: space-around;
 align-items: center;
 box-shadow: 0 -2px  5px rgba(0, 0, 0, 0.1);
 }
 
+.footer a {
+    flex: 1;
+    text-decoration: none;
+    color: inherit;
+}
+
 .footer button {
+width: 100%;
 flex: 1;
 padding: 22px 0px;
 font-size: 17px;
