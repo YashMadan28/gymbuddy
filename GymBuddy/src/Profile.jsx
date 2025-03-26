@@ -13,15 +13,17 @@ const Profile = () => {
     const { profileData, isOwnProfile} = location.state || {};  
 
     return (
-        <Box sx={{ justifyContent: 'center', maxWidth: 500, margin: 'auto', backgroundColor: 'white', padding: 3 }}>
+        <Box sx={{ justifyContent: 'center', maxWidth: 500, margin: 'auto', backgroundColor: 'default', padding: 3 }}>
             <Toolbar /> 
             {/* Conditionally render the name based on if user is viewing their own profile or another persons */}
             <h2>{isOwnProfile? "Your Profile" : `${profileData?.name}'s Profile`}</h2>
 
             {isOwnProfile&& (
-                <Button variant="contained" color="primary" onClick={() => navigate('/profile/edit')}>
-                    Edit Profile
-                </Button>
+                <div className = "profileView" >
+                    <Button variant="contained" color="primary" onClick={() => navigate('/profile/edit')}>
+                        Edit Profile
+                    </Button>
+                </div>
             )}
 
             <div className="image-container">
@@ -43,17 +45,19 @@ const Profile = () => {
 
             <br />
             <br />
-            <Button 
-                variant="contained" 
-                color="secondary" 
-                sx={{ marginBottom: 2 }}
-                /* If user is viewing their own profile and clicks on Back button, takes them to home page.
-                    Otherwise, if user was viewing someone else's profile and clicks on Back button,
-                     takes them back to the Matches page */
-                onClick={() => navigate(isOwnProfile? '/' : '/matches')}
-            >
-                Back
-            </Button>
+            <div className = "profileView">
+                <Button 
+                    variant="contained" 
+                    color="primary" 
+                    sx={{ marginBottom: 2 }}
+                    /* If user is viewing their own profile and clicks on Back button, takes them to home page.
+                        Otherwise, if user was viewing someone else's profile and clicks on Back button,
+                        takes them back to the Matches page */
+                    onClick={() => navigate(isOwnProfile? '/' : '/matches')}
+                >
+                    Back
+                </Button>
+            </div>
         </Box>
     );
 };

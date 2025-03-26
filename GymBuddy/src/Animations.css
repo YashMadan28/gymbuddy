@@ -1,0 +1,323 @@
+/*https://uiverse.io/nikk7007/chatty-bulldog-58*/
+.inoutSlide button {
+padding: 0.8em 1.8em;
+border: 2px solid #17C3B2;
+position: relative;
+overflow: hidden;
+background-color: transparent;
+text-align: center;
+text-transform: uppercase;
+font-size: 16px;
+transition: .3s;
+z-index: 1;
+font-family: inherit;
+color: #17C3B2;
+}
+   
+.inoutSlide button::before {
+content: '';
+width: 0;
+height: 300%;
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%) rotate(45deg);
+background: #17C3B2;
+transition: .5s ease;
+display: block;
+z-index: -1;
+}
+   
+.inoutSlide button:hover::before {
+width: 105%;
+}
+
+.inoutSlide button:hover {
+color: #111;
+}
+
+.purpleGlow button {
+/*--glow-color: rgb(217, 176, 255);*/
+--glow-color: rgb(164, 208, 252);
+/*--glow-spread-color: rgba(191, 123, 255, 0.781);*/
+--enhanced-glow-color: rgb(231, 206, 255);
+/*--btn-color: rgb(100, 61, 136);*/
+--btn-color: rgb(21, 75, 202);
+border: .25em solid var(--glow-color);
+padding: 1em 3em;
+color: var(--glow-color);
+font-size: 15px;
+font-weight: bold;
+background-color: var(--btn-color);
+border-radius: 1em;
+outline: none;
+box-shadow: 0 0 1em .25em var(--glow-color),
+        0 0 4em 1em var(--glow-spread-color),
+        inset 0 0 .75em .25em var(--glow-color);
+text-shadow: 0 0 .5em var(--glow-color);
+position: relative;
+transition: all 0.3s;
+}
+/*https://uiverse.io/cssbuttons-io/funny-dog-69*/
+.purpleGlow button::after {
+pointer-events: none;
+content: "";
+position: absolute;
+top: 120%;
+left: 0;
+height: 60%;
+width: 100%;
+background-color: var(--glow-spread-color);
+filter: blur(2em);
+opacity: .7;
+transform: perspective(1.5em) rotateX(35deg) scale(1, .6);
+}
+
+.purpleGlow button:hover {
+color: var(--btn-color);
+background-color: var(--glow-color);
+box-shadow: 0 0 1em .25em var(--glow-color),
+        0 0 4em 2em var(--glow-spread-color),
+        inset 0 0 .75em .25em var(--glow-color);
+}
+
+.purpleGlow button:active {
+box-shadow: 0 0 0.6em .25em var(--glow-color),
+        0 0 2.5em 2em var(--glow-spread-color),
+        inset 0 0 .5em .25em var(--glow-color);
+}
+
+/*https://uiverse.io/satyamchaudharydev/quick-chicken-50*/
+.titleDesign .MuiTypography-root {
+margin: 0;
+height: auto;
+background: transparent;
+padding: 0;
+border: none;
+cursor: default;
+--border-right: 6px;
+--text-stroke-color: rgba(255,255,255,0.6);
+--animation-color: #37FF8B;
+--fs-size: 2em;
+letter-spacing: 3px;
+/*text-decoration: none;*/
+font-size: var(--fs-size);
+font-family: "Courier", sans-serif;
+position: relative;
+text-transform: uppercase;
+color: transparent;
+-webkit-text-stroke: 1px var(--text-stroke-color);
+display: inline-block;
+}
+/* this is the text, when you hover on button */
+.titleDesign .MuiTypography-root .hover-text {
+position: absolute;
+box-sizing: border-box;
+content: attr(data-text);
+inset: 0;
+color: var(#37FF8B);
+width: 0%;
+inset: 0;
+/*border-right: var(--border-right) solid var(--animation-color);*/
+border-right: 6px solid #37FF8B;
+overflow: hidden;
+transition: width 0.5s ease;
+-webkit-text-stroke: 1px var(#37FF8B);
+}
+/* hover */
+.titleDesign .MuiTypography-root:hover .hover-text {
+width: 100%;
+filter: drop-shadow(0 0 23px var(#37FF8B))
+}
+
+/* https://uiverse.io/SelfMadeSystem/chilly-ladybug-60 */ 
+.frutiger button {
+cursor: pointer;
+position: relative;
+padding: 2px;
+border-radius: 6px;
+border: 0;
+text-shadow: 1px 1px #000a;
+background: linear-gradient(#006caa, #00c3ff);
+box-shadow: 0px 4px 6px 0px #0008;
+transition: 0.3s all;
+}
+
+.frutiger button:hover {
+box-shadow: 0px 6px 12px 0px #0009;
+}
+
+.frutiger button:active {
+box-shadow: 0px 0px 0px 0px #0000;
+}
+
+.inner {
+position: relative;
+inset: 0px;
+padding: 1em;
+border-radius: 4px;
+background: radial-gradient(circle at 50% 100%, #30f8f8 10%, #30f8f800 55%),
+    linear-gradient(#00526a, #009dcd);
+overflow: hidden;
+transition: inherit;
+}
+
+.inner::before {
+content: "";
+position: absolute;
+inset: 0;
+background: linear-gradient(-65deg, #0000 40%, #fff7 50%, #0000 70%);
+background-size: 200% 100%;
+background-repeat: no-repeat;
+animation: thing 3s ease infinite;
+}
+
+@keyframes thing {
+0% {
+    background-position: 130%;
+    opacity: 1;
+}
+
+to {
+    background-position: -166%;
+    opacity: 0;
+}
+}
+
+.top-white {
+position: absolute;
+border-radius: inherit;
+inset: 0 -8em;
+background: radial-gradient(
+    circle at 50% -270%,
+    #fff 45%,
+    #fff6 60%,
+    #fff0 60%
+);
+transition: inherit;
+}
+
+.inner::after {
+content: "";
+position: absolute;
+inset: 0;
+border-radius: inherit;
+transition: inherit;
+box-shadow: inset 0px 2px 8px -2px #0000;
+}
+
+.frutiger button:active .inner::after {
+box-shadow: inset 0px 2px 8px -2px #000a;
+}
+
+.text {
+position: relative;
+z-index: 1;
+color: white;
+font-weight: 550;
+transition: inherit;
+}
+
+/* https://uiverse.io/biswacpcode/curvy-crab-71*/ 
+.titleDesign2 .MuiTypography-root {
+color: white;
+text-decoration: none;
+font-size: 30px;
+border: none;
+background: none;
+font-weight: 500;
+font-family: 'Courier', sans-serif;
+}
+
+.titleDesign2 .MuiTypography-root::before {
+margin-left: auto;
+}
+
+.titleDesign2 .MuiTypography-root::after, 
+.titleDesign2 .MuiTypography-root::before {
+content: '';
+width: 0%;
+height: 2px;
+background: #f44336;
+display: block;
+transition: 0.5s;
+}
+
+.titleDesign2 .MuiTypography-root:hover::after, 
+.titleDesign2 .MuiTypography-root:hover::before {
+width: 100%;
+}
+
+.btn {
+    font: inherit;
+    background-color: #f0f0f0;
+    border: 0;
+    color: #242424;
+    font-size: 1.15rem;
+    padding: 0.375em 1em;
+    text-shadow: 0 0.0625em 0 #fff;
+    box-shadow:
+        inset 0 0.0625em 0 0 #f4f4f4,
+        0 0.0625em 0 0 #efefef,
+        0 0.125em 0 0 #ececec,
+        0 0.25em 0 0 #e0e0e0,
+        0 0.3125em 0 0 #dcdcdc,
+        0 0.375em 0 0 #cacaca,
+        0 0.425em 0.5em 0 #cecece;
+
+    transition: all 0.23s cubic-bezier(0.3, 1.5, 0.7, 1);
+    cursor: pointer;
+    font-weight: bold;
+    margin: -1px;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn active {
+    transform: translate(0.255em) scale(1.05);
+    box-shadow:
+        inset 0 0.03em 0 0 #f4f4f4,
+        0 0.03em 0 0 #efefef,
+        0 0.0625em 0 0 #e0e0e0,
+        0 0.0125em 0 0 #dedede,
+        0 0.2em 0 0 #dcdcdc,
+        0 0.225em 0 0 #cacaca,
+        0 0.255em 0.375em 0 #cecece,
+        0 0 1em 0.5em rgba(191, 123, 255, 0.6),
+        0 0 2em 0.75em rgba(217, 176, 255, 0.4);
+    letter-spacing: 0.1em;
+    color: skyblue;
+}
+
+.btn::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+        circle,
+        rgba(191, 123, 255, 0.4),
+        transparent 70%
+    );
+    filter: blur(1em);
+    opacity: 0.7;
+    transform: perspective(1em) rotateX(45deg) scale(1, 0.3);
+    transition: opacity 0.3s;
+}
+
+.btn:hover::after {
+    opacity: 1,
+}
+
+.middle {border-radius: 0px;}
+.right {
+    border-top-right-radius: 0.5em;
+    border-bottom-right-radius: 0.5em;
+}
+.left {
+    border-top-left-radius: 0.5em;
+    border-bottom-left-radius: 0.5em;
+}
+  
