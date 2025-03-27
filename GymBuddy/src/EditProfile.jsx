@@ -39,7 +39,7 @@ const EditProfile = ({ profileData, setProfileData }) => {
                 justifyContent: 'center',
                 maxWidth: 500,
                 margin: 'auto',
-                backgroundColor: 'white',
+                backgroundColor: 'White',
                 padding: 3,
                 alignItems: 'center',
                 boxSizing: 'border-box'
@@ -110,7 +110,7 @@ const EditProfile = ({ profileData, setProfileData }) => {
                 placeholder="Enter your age"
                 sx={{
                     '& .MuiInputBase-input::placeholder': {
-                        color: 'white',
+                        color: 'black',
                         opacity: 1,
                     },
                 }}
@@ -126,7 +126,7 @@ const EditProfile = ({ profileData, setProfileData }) => {
                 placeholder="Enter your gender"
                 sx={{
                     '& .MuiInputBase-input::placeholder': {
-                        color: 'white',
+                        color: 'black',
                         opacity: 1,
                     },
                 }}
@@ -142,7 +142,7 @@ const EditProfile = ({ profileData, setProfileData }) => {
                 placeholder="About Me"
                 sx={{
                     '& .MuiInputBase-input::placeholder': {
-                        color: 'white',
+                        color: 'black',
                         opacity: 1,
                     },
                 }}
