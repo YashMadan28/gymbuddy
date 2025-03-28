@@ -9,6 +9,7 @@ import Login from './Login';
 import FindGymBuddy from './FindGymBuddy';
 import Matches from './Matches';
 import WorkoutLibrary from './WorkoutLibrary';
+import Schedule from "./Schedule";
 
 
 const App = () => {
@@ -44,7 +45,7 @@ const App = () => {
           element = {<Matches/>} />
         {/*<Route path = "/messages" element = {<Messages />} />*/}
         {/*<Route path = "/stats" element = {<Stats />} />*/}
-        {/*<Route path = "/Schedule" element = {<Schedule />} />*/}
+        <Route path = "/Schedule" element = {<Schedule />} />
         <Route path = "/workout_library" element = {<WorkoutLibrary />} />
           {/*<Route index element = {<WorkoutLibrary />} />*/}
           {/*<Route path = "splits" element = {<SplitView />} />
