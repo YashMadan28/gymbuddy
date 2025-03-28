@@ -1,0 +1,42 @@
+.userinfo{
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .user{
+        display: flex;
+        align-items: center;
+        gap: 20px;
+
+        .avatar-wrapper {
+            position: relative;
+
+        img{
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid black;
+            margin-top: 20px;
+        }
+
+        .online-marker {
+            position: absolute;
+            bottom: 9px; 
+            right: 6px;
+            width: 12px;
+            height: 12px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            border: 3px solid black;
+          }
+        }
+
+        .name-position{
+            margin-top: 15px;
+        }
+
+    }
+
+}
