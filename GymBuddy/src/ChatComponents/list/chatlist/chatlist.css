@@ -1,84 +1,84 @@
-.chatlist{
-    .search{
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        padding: 20px;
+.chatlist {
+  .search {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
 
-    .searchBar{
-        flex:1;
-        background: rgba(17, 25, 40, 0.5);
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        border-radius: 10px;
-        padding: 10px;
+    .searchBar {
+      flex: 1;
+      background: rgba(17, 25, 40, 0.5);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      border-radius: 10px;
+      padding: 10px;
 
-    input{
+      input {
         background-color: transparent;
         border: none;
         outline: none;
         color: white;
         flex: 1;
-    }
+      }
 
-    img{
+      img {
         width: 20px;
         height: 20px;
+      }
     }
-    }
-    }
+  }
 
-    .item {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        padding: 20px;
-        cursor: pointer;
-        border-bottom: 1px solid #dddddd35;
-    
+  .item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    cursor: pointer;
+    border-bottom: 1px solid #dddddd35;
+
     .avatar-wrapper {
-        position: relative;
+      position: relative;
 
-    img{
+      img {
         width: 50px;
         height: 50px;
         border-radius: 50%;
         object-fit: cover;
         border: 4px solid black;
         margin-top: 5px;
-    }
+      }
 
-    .online-marker {
+      .online-marker {
         position: absolute;
-        bottom: 8px; 
+        bottom: 8px;
         right: 2px;
         width: 10px;
         height: 10px;
-        background-color: #4CAF50;
+        background-color: #4caf50;
         border-radius: 50%;
         border: 3px solid black;
       }
     }
-    
-    .texts {
-        display: flex;
-        flex-direction: column;
-        gap: 5px; /* Reduce gap for better spacing */
-        justify-content: center; /* Ensure vertical alignment */
-        align-items: flex-start; /* Align text to the left */   
 
-    span {
+    .texts {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      justify-content: center;
+      align-items: flex-start;
+
+      span {
         font-weight: 500;
         font-size: 18px;
-        display: block; /* Ensure span takes full width */
-    }
-    
-    p {
+        display: block;
+      }
+
+      p {
         font-size: 14px;
         font-weight: 300;
-        margin: 0; /* Remove default paragraph margin */
+        margin: 0;
+      }
     }
-    }
-}
+  }
 }
