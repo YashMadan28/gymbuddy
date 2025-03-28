@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import './Animations.css';
 
 <Link to = "/workout_library">
     <button>Workout Library</button>
@@ -80,44 +81,31 @@ function WorkoutLibrary() {
             <div style = {{ marginBottom: '40px '}}>
                 <h2> Workout Splits</h2>
 
-                <div style = {{ marginBottom: '20px '}}>
+                <div className = "frutiger" style = {{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '20px', justifyContent: 'center' }}>
                     {workoutData.splits.map((split, splitIndex) => (
                         <button
                         key = {splitIndex}
-                        style = {{
-                            padding: '10px 15px',
-                            background: activeSplit == splitIndex ? '#4CAF50' : '#d0d0d0',
-                            border: 'none',
-                            borderRadius: '5px',
-                            marginRight: '10px',
-                            cursor: 'pointer',
-                            color: '#ffffff',
-                        }}
+                        /*className = "fruitger"*/
                         onClick = {() => {
                             setActiveSplit(splitIndex);
                             setActiveDay(null);
                         }}
                         >
-                            {split.name}
+                            <div className = "inner" style = {{gap: '20px'}}>
+                                <div className = "top-white"></div>
+                                <span className = "text">{split.name}</span>
+                            </div>
                         </button>
                     ))}
                 </div>
                 {activeSplit !== null && (
-                    <div style = {{ marginBottom: '20px' }}>
+                    <div className = "purpleGlow" style = {{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '20px', justifyContent: 'center'  }}>
                         {workoutData.splits[activeSplit].days.map((day, dayIndex) => (
                             <button
                                 key = {dayIndex}
-                                style = {{
-                                    padding: '8px 12px',
-                                    background: activeDay == dayIndex ? '#8BC34A' : '#d0d0d0',
-                                    border: 'none',
-                                    borderRadius: '5px',
-                                    marginRight: '8px',
-                                    cursor: 'pointer'
-                                }}
                                 onClick = {() => setActiveDay(dayIndex)}
                             >
-                                {day.dayName}
+                            {day.dayName}
                             </button>
                         ))}
                     </div>
@@ -137,7 +125,7 @@ function WorkoutLibrary() {
 
             <div>
                 <h2> Muscle Group Focus </h2>
-                <div style = {{ display: 'flex', gap: '15px', flexWrap: 'wrap', marginBottom: '20px' }}>
+                <div style = {{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '20px', justifyContent: 'center'  }}>
                     {workoutData.muscleGroups.map((group, index) => (
                         <button
                             key = {index}
