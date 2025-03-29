@@ -1,37 +1,14 @@
 module.exports = {
   env: {
-    es6: true,
     node: true,
+    es6: true,
   },
   parserOptions: {
-    ecmaVersion: 2018,
-    sourceType: "script", // Explicitly set to script (default)
+    ecmaVersion: 2020,
   },
-  extends: ["eslint:recommended", "google"],
-  rules: {
-    "no-restricted-globals": ["error", "name", "length"],
-    "prefer-arrow-callback": "error",
-    quotes: ["error", "double", { allowTemplateLiterals: true }],
-    "require-jsdoc": "off", // Disable JSDoc requirement
-    "max-len": ["error", { code: 120, ignoreUrls: true }], // Allow longer URLs
-    camelcase: "off", // Disable camelcase enforcement
-    indent: ["error", 2], // Match your current indentation
-    "comma-dangle": "off", // Disable comma dangle rule
-    "object-curly-spacing": "off", // Disable spacing enforcement
-    "arrow-parens": ["error", "as-needed"], // Minimal arrow parens
-    "no-unused-vars": ["error", { args: "none" }], // Allow unused args
-    "no-undef": "off", // Disable undef checks (for fetch)
-  },
+  extends: ["eslint:recommended"],
   globals: {
-    fetch: "readonly", // Declare fetch as a global
+    module: "readonly", // Declare 'module' as a global variable
+    require: "readonly", // Declare 'require' as a global variable
   },
-  overrides: [
-    {
-      files: ["**/*.spec.*"],
-      env: {
-        mocha: true,
-      },
-      rules: {},
-    },
-  ],
 };
