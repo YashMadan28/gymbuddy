@@ -7,37 +7,10 @@ import { useNavigate } from 'react-router-dom';
 function Matches() {
     const navigate = useNavigate();
 
-    // States for the chat dialog, selected profile, and messages
-    const [openChat, setOpenChat] = useState(false);
-    const [selectedProfile, setSelectedProfile] = useState(null);
-    const [messages, setMessages] = useState([]);
-    const [newMessage, setNewMessage] = useState('');
-
     // Navigate to the selected person's profile page
     const handleViewProfile = (profileData) => {
         navigate('/profile', { state: { profileData } });
     };
-
-    // Open chat dialog with selected person
-    const handleConnect = (profile) => {
-        setSelectedProfile(profile);
-        setOpenChat(true);
-    };
-
-    // Add new message to the chat log
-    const handleSendMessage = () => {
-        if (newMessage.trim()) {
-            setMessages([...messages, { text: newMessage, sender: 'You' }]);
-            setNewMessage(''); // Clear input field
-        }
-    };
-
-    // Close chat dialog and reset messages (messages are not saved and stored)
-    const handleCloseChat = () => {
-        setOpenChat(false);
-        setMessages([]);
-    };
-
     const numberOfProfiles = profiles.length;
 
     return (
@@ -112,93 +85,16 @@ function Matches() {
                                 <Button 
                                     variant="contained"
                                     color="primary"
-                                    onClick={() => handleConnect(profile)}
+                                    onClick={() => navigate("/messages")}
                                     size="small"
                                 >
-                                    Connect
+                                    Message
                                 </Button>
                             </Box>
                         </Box>
                     </Box>
                 ))}
             </Box>
-
-            {/* Chat Dialog */}
-            <Dialog open={openChat} onClose={handleCloseChat} maxWidth="sm" fullWidth>
-                <DialogContent sx={{ backgroundColor: 'white', color: 'black', padding: 2 }}>
-                    {/* Display messages */}
-                    <Box sx={{ maxHeight: 200, overflowY: 'auto', paddingBottom: 2 }}>
-                        {messages.map((message, index) => (
-                            <Box 
-                                key={index}
-                                sx={{
-                                    marginBottom: 1,
-                                    padding: 1,
-                                    borderRadius: 1,
-                                    backgroundColor: message.sender === 'You' ? '#4a90e2' : 'transparent',
-                                    color: message.sender === 'You' ? 'white' : 'black',
-                                    border: message.sender === 'You' ? '2px solid #4a90e2' : 'none',
-                                    maxWidth: '35%',
-                                    alignSelf: message.sender === 'You' ? 'flex-end' : 'flex-start',
-                                    wordWrap: 'break-word',
-                                }}
-                            >
-                                <Typography variant="body2" fontWeight="bold">{message.sender}:</Typography>
-                                <Typography variant="body1">{message.text}</Typography>
-                            </Box>
-                        ))}
-                    </Box>
-
-                    {/* Message Input Field & Send Button */}
-                    <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 2, borderRadius: '20px', border: '2px solid #ddd', padding: '8px' }}>
-                        <TextField
-                            fullWidth
-                            variant="outlined"
-                            label="Type your message..."
-                            value={newMessage}
-                            onChange={(e) => setNewMessage(e.target.value)}
-                            /* If Shift+Enter is pressed, a new line is created.
-                            If just the Enter key is pressed, then it will send the message. */
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter' && !e.shiftKey) {
-                                    e.preventDefault();
-                                    handleSendMessage();
-                                }
-                            }}
-                            multiline
-                            rows={1}
-                            sx={{
-                                backgroundColor: '#f5f5f5',
-                                '& .MuiInputBase-root': { color: 'black' },
-                                '& .MuiInputLabel-root': { color: 'black' },
-                                '& .MuiOutlinedInput-notchedOutline': { borderColor: 'transparent' },
-                            }}
-                        />
-                        {/* The "X" icon, which will close the chat dialog if clicked */}
-                        <IconButton 
-                            onClick={handleCloseChat} 
-                            sx={{ position: 'absolute', top: 8, right: 8 }}
-                        >
-                            <CloseIcon />
-                        </IconButton>
-                        {/* The Send button */}
-                        <Button
-                            onClick={handleSendMessage}
-                            color="primary"
-                            sx={{
-                                marginLeft: 2,
-                                borderRadius: '50px',
-                                padding: '8px 16px',
-                                backgroundColor: '#4a90e2',
-                                color: 'white',
-                                '&:hover': { backgroundColor: '#357ABD' }
-                            }}
-                        >
-                            Send
-                        </Button>
-                    </Box>
-                </DialogContent>
-            </Dialog>
         </Box>
     );
 }
