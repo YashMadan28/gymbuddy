@@ -10,7 +10,7 @@
   object-fit: cover; /* Ensures the image covers the container while preserving its aspect ratio */
   border-radius: 50%; /* Makes the image circular */
   border: 5px solid black;
-  margin-top: 50px;
+  margin-top: 30px;
 }
 
 /*https://uiverse.io/niat786/perfect-warthog-57*/

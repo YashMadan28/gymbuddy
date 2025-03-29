@@ -39,10 +39,11 @@ const Profile = () => {
             <Typography variant="h6" sx={{ paddingTop: '10px', paddingBottom: '10px' }}>
                 Gender: {profileData?.gender}
             </Typography>
-            <Typography variant="body1" className="about-text" sx={{ paddingTop: '10px', paddingBottom: '10px' }}>
-                About Me: <br /> {profileData?.about}
+            <Typography variant="h6" sx={{ paddingTop: '10px', paddingBottom: '10px' }}>
+                About Me:<br/> <Typography variant="body1" className="about-text" sx={{ fontWeight: 'normal' }}>
+                                {profileData?.about}
+                                </Typography>
             </Typography>
-
             <br />
             <br />
             <div className = "profileView">
