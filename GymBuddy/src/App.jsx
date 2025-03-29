@@ -18,6 +18,7 @@ const App = () => {
     name: "",
     age: "",
     gender: "",
+    gym: "",
     about: "",
     image: null,
   });
