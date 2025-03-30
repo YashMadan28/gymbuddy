@@ -4,7 +4,7 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-
+import './Animations.css';
 
 const Header = () => {
   return (
@@ -17,11 +17,12 @@ const Header = () => {
         boxShadow: "none",
         }}
     > 
-      <Toolbar sx = {{ display: 'flex', justifyContent: 'center', paddingTop: '13px'}}>
+      <Toolbar sx = {{ display: 'flex', justifyContent: 'center', paddingTop: '13px', alignItems: 'center'}}>
         <Link 
-          to = "/profile"
-          style = {{ textDecoration: 'none' }}
-          >
+        to="/profile"
+        style={{ textDecoration: 'none', marginRight: 'auto' }}
+        state={{ isOwnProfile: true }}
+        >
           <Button
             sx = {{
               padding: '10px 20px',
@@ -41,27 +42,33 @@ const Header = () => {
                 background: 'rgb(0, 140, 255)',
               },
             }}
-          >Profile</Button>
-          </Link>
+          >
+            Profile
+          </Button>
+        </Link>
+        <div className = "titleDesign2" >
           <Typography 
             variant = "h6" 
             component = "div" 
             sx = {{ 
               fontSize: '30px',
-              fontStyle: 'normal',
               fontFamily: 'Courier',
               flexGrow: 1,
               textAlign: 'center',
-              marginLeft: 'auto',
-              marginright: 'auto',
-              display: 'flex', 
-              justifyContent: 'center'
+              position: 'relative',
+              display: 'inline-block',
+              cursor: 'default', 
+              justifyContent: 'center',
             }}
-          >GymBuddy</Typography>
+          >
+            GymBuddy
+            <span className = "hover-text" data-text = "GYMBUDDY"></span>
+          </Typography>
+        </div>     
           <Button 
             color = "inherit"
             sx = {{
-              marginRight: 'auto',
+              marginLeft: 'auto',
               justifyContent: 'right',
               padding: '10px 20px',
               border: 'none',
@@ -79,7 +86,9 @@ const Header = () => {
                 background: 'rgb(0, 140, 255)',
               },
             }}
-          >Log in</Button>
+          >
+            Log in
+          </Button>
       </Toolbar>
     </AppBar>
   );

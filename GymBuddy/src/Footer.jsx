@@ -1,13 +1,22 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './App.css'
 
 const Footer = () => {
     return (
         <footer className = "footer"> 
-            <button>Messages</button>
-            <button>Stats</button>
-            <button>Schedule</button>
-            <button>Workout Library</button>
+            <Link to = "/messages">
+                <button>Messages</button>
+            </Link>
+            <Link to = "/stats">
+                <button>Stats</button>
+            </Link>
+            <Link to = "/schedule">
+                <button>Schedule</button>
+            </Link>
+            <Link to = "/workout_library">
+                <button>Workout Library</button>
+            </Link>
         </footer>
     );
 };
