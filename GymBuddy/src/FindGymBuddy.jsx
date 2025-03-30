@@ -30,7 +30,6 @@ const FindGymBuddy = () => {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false); 
-  const [openDialog, setOpenDialog] = useState(false);
 
   const navigate = useNavigate();
 
@@ -81,10 +80,6 @@ const FindGymBuddy = () => {
         }));
         setLocations(foundLocations);
         
-        // Set the first location as selected by default
-        if (foundLocations.length > 0) {
-          setSelectedLocation(foundLocations[0]);
-        }
       } else {
         alert("No results found");
       }
@@ -99,18 +94,6 @@ const FindGymBuddy = () => {
 
   const handleMarkerClick = (location) => {
     setSelectedLocation(location);
-    setOpenDialog(true);
-  };
-
-  const handleConfirm = () => {
-    setOpenDialog(false);
-    // Navigate with the selected location
-    navigate('/Matches', { state: { location: selectedLocation } });
-  };
-
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-    alert('Please select a different location or adjust your search.');
   };
 
   if (loadError) {
@@ -205,62 +188,86 @@ const FindGymBuddy = () => {
         </Box>
       )}
 
-      {locations.length > 0 && (
-        <Typography 
-          variant="h6" 
-          sx={{ 
-            textAlign: 'center', 
-            marginTop: 2, 
-            fontWeight: '500',
-            color: 'black' 
-          }}
-        >
-          {locations.length} gym(s) found. Select a location:
-        </Typography>
-      )}
+{locations.length > 0 && (
+  <>
+    <Typography 
+      variant="h6" 
+      sx={{ 
+        textAlign: 'center', 
+        marginTop: 2, 
+        fontWeight: '500',
+        color: 'black' 
+      }}
+    >
+      {locations.length} gym(s) found. Click on a marker to select:
+    </Typography>
 
-      {(locations.length > 0 || submitted) && (
-        <GoogleMap
-          mapContainerStyle={{ width: '100%', height: '400px' }}
-          center={mapCenter}
-          zoom={locations.length > 0 ? 12 : 4}
-        >
-          {locations.map((location, index) => (
-            <Marker 
-              key={index}
-              position={location.position}
-              onClick={() => handleMarkerClick(location)}
-              title={`${location.name || 'Gym'}\n${location.address}`}
-              icon={{
-                scaledSize: new window.google.maps.Size(32, 32)
-              }}
-            />
-          ))}
-        </GoogleMap>
-      )}
+    {selectedLocation && (
+      <Box sx={{ 
+        mb: 2, 
+        p: 2, 
+        border: '1px solid #ddd', 
+        borderRadius: 1,
+        backgroundColor: 'background.paper'
+      }}>
+        <Typography><strong>Selected:</strong> {selectedLocation.name}</Typography>
+        <Typography>{selectedLocation.address}</Typography>
+      </Box>
+    )}
+  </>
+)}
+
+{(locations.length > 0 || submitted) && (
+  <GoogleMap
+    mapContainerStyle={{ width: '100%', height: '400px' }}
+    center={mapCenter}
+    zoom={locations.length > 0 ? 12 : 4}
+  >
+    {locations.map((location, index) => (
+      <Marker 
+        key={index}
+        position={location.position}
+        onClick={() => handleMarkerClick(location)}
+        title={`${location.name || 'Gym'}\n${location.address}`}
+        icon={{
+          scaledSize: new window.google.maps.Size(32, 32)
+        }}
+      />
+    ))}
+  </GoogleMap>
+)}
+
+{locations.length > 0 && (
+  <Box sx={{ 
+    display: 'flex', 
+    justifyContent: 'flex-end', 
+    mt: 1,
+    mb: 1,
+    flex: '0 0 auto'
+  }}>
+    <Button 
+      variant="contained"
+      color="primary"
+      onClick={() => navigate('/Matches', { state: { location: selectedLocation } })}
+      disabled={!selectedLocation}
+      sx={{
+        px: 3,
+        minWidth: 120,
+        '&:disabled': {
+          opacity: 0.7
+        }
+      }}
+    >
+      Confirm
+    </Button>
+  </Box>
+)}
 
       {submitted && locations.length === 0 && !loading && (
         <Typography variant="h6" color="error" sx={{ textAlign: 'center', marginTop: 2 }}>
           No gym locations found. Please check the details.
         </Typography>
       )}
-
-      <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>
-          Confirm Location: {selectedLocation?.name || 'Gym'}
-        </DialogTitle>
-        <Typography sx={{ padding: '0 24px' }}>
-          {selectedLocation?.address}
-        </Typography>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} color="secondary">
-            No
-          </Button>
-          <Button onClick={handleConfirm} color="primary">
-            Yes
-          </Button>
-        </DialogActions>
-      </Dialog>
     </Box>
   );
 };

@@ -3,6 +3,7 @@ import { TextField, Button, Box, Toolbar } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import default_image from "./assets/default_image.jpg";
 import "./EditProfile.css";
+import EditGymDialog from './EditGymPopup';
 
 const EditProfile = ({ profileData, setProfileData }) => {
   const fileInputRef = useRef(null);
@@ -17,12 +18,22 @@ const EditProfile = ({ profileData, setProfileData }) => {
     if (selectedFile) {
       const imageUrl = URL.createObjectURL(selectedFile);
       setFile(imageUrl);
-      setProfileData((prevData) => ({
-        ...prevData,
-        image: imageUrl,
-      }));
+      setProfileData(prev => ({ ...prev, image: imageUrl }));
     }
   };
+
+    const [editDialogOpen, setEditDialogOpen] = useState(false);
+    const [gymData, setGymData] = useState({
+      gymName: '',
+      city: '',
+      state: '',
+      location: null
+    });
+  
+    const handleSaveGym = (newData) => {
+      setGymData(newData);
+      // save to your backend
+      };
 
   const handleInputChange = (field, value) => {
     setProfileData((prevData) => ({
@@ -39,7 +50,6 @@ const EditProfile = ({ profileData, setProfileData }) => {
         justifyContent: "center",
         maxWidth: 500,
         margin: "auto",
-        backgroundColor: "White",
         padding: 3,
         alignItems: "center",
         boxSizing: "border-box",
@@ -47,34 +57,41 @@ const EditProfile = ({ profileData, setProfileData }) => {
     >
       <Toolbar />
 
-      <input
-        type="file"
-        ref={fileInputRef}
-        onChange={handlePictureChange}
-        style={{ display: "none" }}
-      />
-
       <div className="image-container">
         <img
           src={file || default_image}
-          alt="Preview"
           className="profile-image"
         />
       </div>
-
-      <Button
-        variant="contained"
-        color="primary"
-        sx={{ marginTop: 2, marginBottom: 2 }}
-        onClick={handleButtonClick}
-      >
-        Upload
-      </Button>
-
+      
+      <div className="upload-button-container">
+        <div className="input-div" onClick={handleButtonClick}>
+        <input
+          ref={fileInputRef}
+          type="file"
+          onChange={handlePictureChange}
+          style={{ display: 'none' }}
+          accept="image/*"
+        />
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="1.5em"
+  height="1.5em"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  strokeWidth="2"
+  className="icon"
+>
+  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+  <circle cx="12" cy="13" r="4"></circle>
+</svg>
+        </div>
+      </div>
       <br />
       <br />
       <br />
-
+      <div className="profileView">
       <Button
         variant="contained"
         color="secondary"
@@ -85,22 +102,39 @@ const EditProfile = ({ profileData, setProfileData }) => {
       >
         Back
       </Button>
+        </div>
 
-      <TextField
-        label="Name"
-        variant="outlined"
-        fullWidth
-        margin="normal"
-        value={profileData.name}
-        onChange={(e) => handleInputChange("name", e.target.value)}
-        placeholder="Enter your name"
-        sx={{
-          "& .MuiInputBase-input::placeholder": {
-            color: "white",
-            opacity: 1,
-          },
-        }}
-      />
+<TextField
+  label="Name"
+  variant="outlined"
+  fullWidth
+  margin="normal"
+  value={profileData.name}
+  onChange={(e) => handleInputChange("name", e.target.value)}
+  placeholder="Enter your name"
+  sx={{
+    "& .MuiInputLabel-root": {
+      color: "rgba(0, 0, 0, 0.5)",
+      "&.Mui-focused": {
+        color: "black"
+      },
+    },
+    "& .MuiOutlinedInput-root": {
+      "&:hover fieldset": {
+        borderWidth: "1px",
+        borderColor: "black",
+      },
+      "&.Mui-focused fieldset": {
+        borderWidth: "2px",
+        borderColor: "black !important",
+      },
+    },
+    "& .MuiInputBase-input::placeholder": {
+      color: "black",
+      opacity: 0.5,
+    },
+  }}
+/>
 
       <TextField
         label="Age"
@@ -111,9 +145,25 @@ const EditProfile = ({ profileData, setProfileData }) => {
         onChange={(e) => handleInputChange("age", e.target.value)}
         placeholder="Enter your age"
         sx={{
+          "& .MuiInputLabel-root": {
+            color: "rgba(0, 0, 0, 0.5)",
+            "&.Mui-focused": {
+              color: "black"
+            },
+          },
+          "& .MuiOutlinedInput-root": {
+            "&:hover fieldset": {
+              borderWidth: "1px",
+              borderColor: "black",
+            },
+            "&.Mui-focused fieldset": {
+              borderWidth: "2px",
+              borderColor: "black !important",
+            },
+          },
           "& .MuiInputBase-input::placeholder": {
             color: "black",
-            opacity: 1,
+            opacity: 0.5,
           },
         }}
       />
@@ -127,12 +177,70 @@ const EditProfile = ({ profileData, setProfileData }) => {
         onChange={(e) => handleInputChange("gender", e.target.value)}
         placeholder="Enter your gender"
         sx={{
+          "& .MuiInputLabel-root": {
+            color: "rgba(0, 0, 0, 0.5)",
+            "&.Mui-focused": {
+              color: "black"
+            },
+          },
+          "& .MuiOutlinedInput-root": {
+            "&:hover fieldset": {
+              borderWidth: "1px",
+              borderColor: "black",
+            },
+            "&.Mui-focused fieldset": {
+              borderWidth: "2px",
+              borderColor: "black !important",
+            },
+          },
           "& .MuiInputBase-input::placeholder": {
             color: "black",
-            opacity: 1,
+            opacity: 0.5,
           },
         }}
       />
+
+      <TextField
+        label="Gym"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+        value={profileData.gym}
+        onClick={() => setEditDialogOpen(true)}
+        sx={{
+          "& .MuiInputLabel-root": {
+            color: "rgba(0, 0, 0, 0.5)",
+            "&.Mui-focused": {
+              color: "black"
+            },
+          },
+          "& .MuiOutlinedInput-root": {
+            "&:hover fieldset": {
+              borderWidth: "1px",
+              borderColor: "black",
+            },
+            "&.Mui-focused fieldset": {
+              borderWidth: "2px",
+              borderColor: "black !important",
+            },
+          },
+          "& .MuiInputBase-input::placeholder": {
+            color: "black",
+            opacity: 0.5,
+          },
+        }}
+      />
+      <EditGymDialog
+        open={editDialogOpen}
+        onClose={() => setEditDialogOpen(false)}
+        onSave={handleSaveGym}
+        initialData={{
+          gymName: gymData.gymName,
+          city: gymData.city,
+          state: gymData.state
+        }}
+      />
+
 
       <TextField
         label="About Me"
@@ -143,13 +251,29 @@ const EditProfile = ({ profileData, setProfileData }) => {
         onChange={(e) => handleInputChange("about", e.target.value)}
         placeholder="About Me"
         sx={{
+          "& .MuiInputLabel-root": {
+            color: "rgba(0, 0, 0, 0.5)",
+            "&.Mui-focused": {
+              color: "black"
+            },
+          },
+          "& .MuiOutlinedInput-root": {
+            "&:hover fieldset": {
+              borderWidth: "1px",
+              borderColor: "black",
+            },
+            "&.Mui-focused fieldset": {
+              borderWidth: "2px",
+              borderColor: "black !important",
+            },
+          },
           "& .MuiInputBase-input::placeholder": {
             color: "black",
-            opacity: 1,
+            opacity: 0.5,
           },
         }}
       />
-
+    <div className="profileView">
       <Button
         variant="contained"
         color="primary"
@@ -160,6 +284,7 @@ const EditProfile = ({ profileData, setProfileData }) => {
       >
         Save Changes
       </Button>
+    </div>
     </Box>
   );
 };
