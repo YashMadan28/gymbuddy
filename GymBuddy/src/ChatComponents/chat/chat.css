@@ -139,17 +139,6 @@
       cursor: pointer;
     }
 
-    input {
-      flex: 1;
-      background-color: rgba(17, 25, 40, 0.5);
-      border: none;
-      outline: none;
-      color: white;
-      padding: 20px;
-      border-radius: 10px;
-      font-size: 16px;
-    }
-
     .emoji {
       position: relative;
 
@@ -160,13 +149,135 @@
       }
     }
 
-    .sendButton {
-      background-color: #5183fe;
-      color: white;
-      padding: 13px 25px;
-      border: none;
-      border-radius: 5px;
+/*https://uiverse.io/mpody11/big-goose-56--MODIFIED*/
+    .messageBox {
+      width: 100%;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      background-color: rgba(30, 30, 30, 0.85);
+      padding: 0;
+      border-radius: 10px;
+      border: 1px solid rgba(63, 63, 63, 0.7);
+      transition: all 0.2s;
+      position: relative;
+      backdrop-filter: blur(3px);
+    }
+    
+    .messageBox:focus-within {
+      outline: 1px solid rgba(255, 255, 255, 0.5);
+      outline-offset: -1px;
+      background-color: rgba(30, 30, 30, 0.9);
+    }
+    
+    .fileUploadWrapper {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 12px;
+      border-right: 1px solid rgba(63, 63, 63, 0.5);
+      background-color: transparent;
+    }
+    
+    #file {
+      display: none;
+    }
+    
+    .fileUploadWrapper label {
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      height: 100%;
+      width: 100%;
+      background-color: transparent;
+    }
+    
+    .fileUploadWrapper label svg {
+      height: 19px;
+    }
+    
+    #messageInput {
+      flex: 1;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.08);
+      outline: none;
+      border: none;
+      padding: 0 12px;
+      color: #f5f5f5;
+      font-size: 14px;
+    }
+    
+    #messageInput:focus {
+      background-color: rgba(255, 255, 255, 0.12);
+    }
+    
+    #sendButton {
+      height: 100%;
+      background-color: transparent;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0 12px;
+      border-left: 1px solid rgba(63, 63, 63, 0.5);
+    }
+    
+    #sendButton svg {
+      height: 19px;
+    }
+    
+    #messageInput:not(:placeholder-shown) ~ #sendButton svg path {
+      fill: #3682f4;
+      stroke: white;
+    }
+    
+    #sendButton:hover svg path {
+      fill: #3682f4;
+      stroke: white;
+    }
+    
+    .fileUploadWrapper label svg path,
+    .fileUploadWrapper label svg circle,
+    #sendButton svg path {
+      transition: all 0.3s;
+    }
+    
+    .fileUploadWrapper label:hover svg path {
+      stroke: #fff;
+    }
+    
+    .fileUploadWrapper label:hover svg circle {
+      stroke: #fff;
+      fill: #3c3c3c;
+    }
+    
+    .fileUploadWrapper label:hover .tooltip {
+      display: block;
+      opacity: 1;
+    }
+    
+    .tooltip {
+      position: absolute;
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: none;
+      opacity: 0;
+      color: white;
+      font-size: 10px;
+      background-color: rgba(0, 0, 0, 0.9);
+      padding: 6px 10px;
+      border: 1px solid #3c3c3c;
+      border-radius: 5px;
+      box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.596);
+      transition: all 0.3s;
+      white-space: nowrap;
+      backdrop-filter: blur(2px);
+    }
+
     }
   }
-}
