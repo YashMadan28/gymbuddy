@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from './firebase';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 import AppLayout from "./AppLayout";
 import Profile from "./Profile";
 import EditProfile from "./EditProfile";
 import MainPage from "./MainPage";
+import Signup from "./Signup";
 import Login from "./Login";
 import FindGymBuddy from "./FindGymBuddy";
 import Matches from "./Matches";
@@ -14,6 +17,17 @@ import Messages from "./Messages";
 import Schedule from "./Schedule";
 
 const App = () => {
+
+  useEffect(() => {
+    const unSub = onAuthStateChanged(auth, (user) => {
+      console.log(user);
+    });
+  
+    return () => {
+      unSub();
+    };
+  }, []);
+
   const [profileData, setProfileData] = useState({
     name: "",
     age: "",
@@ -41,6 +55,7 @@ const App = () => {
               />
             }
           />
+          <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/findgymbuddy" element={<FindGymBuddy />} />
           <Route path="/matches" element={<Matches />} />
