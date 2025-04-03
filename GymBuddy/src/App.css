@@ -6,9 +6,13 @@
 }
 
 body {
-  background-color: #a01212a4 !important;
-  /*background-color: #800000 !important;*/
-}
+    /* Black base layer followed by red layer applied on top.
+    This is to ensure the color stays consistent no matter if
+    light/dark mode is enabled. */ 
+    background: linear-gradient(#a01212a4, #a01212a4), #000 !important;
+    color: white;
+    /*background-color: #800000 !important;*/
+  }
 
 .footer {
   position: fixed;

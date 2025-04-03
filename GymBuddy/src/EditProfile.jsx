@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { TextField, Button, Box, Toolbar } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import default_image from "./assets/default_image.jpg";
-import "./EditProfile.css";
+import "./editprofile.css";
 import EditGymDialog from './EditGymPopup';
 
 const EditProfile = ({ profileData, setProfileData }) => {
@@ -103,7 +103,6 @@ const EditProfile = ({ profileData, setProfileData }) => {
         Back
       </Button>
         </div>
-
 <TextField
   label="Name"
   variant="outlined"
@@ -114,24 +113,27 @@ const EditProfile = ({ profileData, setProfileData }) => {
   placeholder="Enter your name"
   sx={{
     "& .MuiInputLabel-root": {
-      color: "rgba(0, 0, 0, 0.5)",
+      color: "rgba(255, 255, 255, 0.6)", // Softer label
       "&.Mui-focused": {
-        color: "black"
+        color: "rgba(255, 255, 255, 0.8)" // Slightly brighter when focused
       },
     },
     "& .MuiOutlinedInput-root": {
+      color: "rgba(255, 255, 255, 0.9)", // Soft white text
+      "& fieldset": {
+        borderColor: "rgba(255, 255, 255, 0.5)", // Dim border
+      },
       "&:hover fieldset": {
+        borderColor: "rgba(255, 255, 255, 0.7)",
         borderWidth: "1px",
-        borderColor: "black",
       },
       "&.Mui-focused fieldset": {
+        borderColor: "rgba(255, 255, 255, 0.9) !important",
         borderWidth: "2px",
-        borderColor: "black !important",
       },
     },
     "& .MuiInputBase-input::placeholder": {
-      color: "black",
-      opacity: 0.5,
+      color: "rgba(255, 255, 255, 0.4)", // Very subtle placeholder
     },
   }}
 />
@@ -146,24 +148,27 @@ const EditProfile = ({ profileData, setProfileData }) => {
         placeholder="Enter your age"
         sx={{
           "& .MuiInputLabel-root": {
-            color: "rgba(0, 0, 0, 0.5)",
+            color: "rgba(255, 255, 255, 0.6)", // Softer label
             "&.Mui-focused": {
-              color: "black"
+              color: "rgba(255, 255, 255, 0.8)" // Slightly brighter when focused
             },
           },
           "& .MuiOutlinedInput-root": {
+            color: "rgba(255, 255, 255, 0.9)", // Soft white text
+            "& fieldset": {
+              borderColor: "rgba(255, 255, 255, 0.5)", // Dim border
+            },
             "&:hover fieldset": {
+              borderColor: "rgba(255, 255, 255, 0.7)",
               borderWidth: "1px",
-              borderColor: "black",
             },
             "&.Mui-focused fieldset": {
+              borderColor: "rgba(255, 255, 255, 0.9) !important",
               borderWidth: "2px",
-              borderColor: "black !important",
             },
           },
           "& .MuiInputBase-input::placeholder": {
-            color: "black",
-            opacity: 0.5,
+            color: "rgba(255, 255, 255, 0.4)", // Very subtle placeholder
           },
         }}
       />
@@ -178,24 +183,27 @@ const EditProfile = ({ profileData, setProfileData }) => {
         placeholder="Enter your gender"
         sx={{
           "& .MuiInputLabel-root": {
-            color: "rgba(0, 0, 0, 0.5)",
+            color: "rgba(255, 255, 255, 0.6)", // Softer label
             "&.Mui-focused": {
-              color: "black"
+              color: "rgba(255, 255, 255, 0.8)" // Slightly brighter when focused
             },
           },
           "& .MuiOutlinedInput-root": {
+            color: "rgba(255, 255, 255, 0.9)", // Soft white text
+            "& fieldset": {
+              borderColor: "rgba(255, 255, 255, 0.5)", // Dim border
+            },
             "&:hover fieldset": {
+              borderColor: "rgba(255, 255, 255, 0.7)",
               borderWidth: "1px",
-              borderColor: "black",
             },
             "&.Mui-focused fieldset": {
+              borderColor: "rgba(255, 255, 255, 0.9) !important",
               borderWidth: "2px",
-              borderColor: "black !important",
             },
           },
           "& .MuiInputBase-input::placeholder": {
-            color: "black",
-            opacity: 0.5,
+            color: "rgba(255, 255, 255, 0.4)", // Very subtle placeholder
           },
         }}
       />
@@ -209,24 +217,27 @@ const EditProfile = ({ profileData, setProfileData }) => {
         onClick={() => setEditDialogOpen(true)}
         sx={{
           "& .MuiInputLabel-root": {
-            color: "rgba(0, 0, 0, 0.5)",
+            color: "rgba(255, 255, 255, 0.6)", // Softer label
             "&.Mui-focused": {
-              color: "black"
+              color: "rgba(255, 255, 255, 0.8)" // Slightly brighter when focused
             },
           },
           "& .MuiOutlinedInput-root": {
+            color: "rgba(255, 255, 255, 0.9)", // Soft white text
+            "& fieldset": {
+              borderColor: "rgba(255, 255, 255, 0.5)", // Dim border
+            },
             "&:hover fieldset": {
+              borderColor: "rgba(255, 255, 255, 0.7)",
               borderWidth: "1px",
-              borderColor: "black",
             },
             "&.Mui-focused fieldset": {
+              borderColor: "rgba(255, 255, 255, 0.9) !important",
               borderWidth: "2px",
-              borderColor: "black !important",
             },
           },
           "& .MuiInputBase-input::placeholder": {
-            color: "black",
-            opacity: 0.5,
+            color: "rgba(255, 255, 255, 0.4)", // Very subtle placeholder
           },
         }}
       />
@@ -252,24 +263,27 @@ const EditProfile = ({ profileData, setProfileData }) => {
         placeholder="About Me"
         sx={{
           "& .MuiInputLabel-root": {
-            color: "rgba(0, 0, 0, 0.5)",
+            color: "rgba(255, 255, 255, 0.6)", // Softer label
             "&.Mui-focused": {
-              color: "black"
+              color: "rgba(255, 255, 255, 0.8)" // Slightly brighter when focused
             },
           },
           "& .MuiOutlinedInput-root": {
+            color: "rgba(255, 255, 255, 0.9)", // Soft white text
+            "& fieldset": {
+              borderColor: "rgba(255, 255, 255, 0.5)", // Dim border
+            },
             "&:hover fieldset": {
+              borderColor: "rgba(255, 255, 255, 0.7)",
               borderWidth: "1px",
-              borderColor: "black",
             },
             "&.Mui-focused fieldset": {
+              borderColor: "rgba(255, 255, 255, 0.9) !important",
               borderWidth: "2px",
-              borderColor: "black !important",
             },
           },
           "& .MuiInputBase-input::placeholder": {
-            color: "black",
-            opacity: 0.5,
+            color: "rgba(255, 255, 255, 0.4)", // Very subtle placeholder
           },
         }}
       />
