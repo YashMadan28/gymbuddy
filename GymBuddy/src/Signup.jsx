@@ -1,5 +1,5 @@
 import React from "react";
-import { FaUser, FaLock, FaEnvelope } from "react-icons/fa";
+import { FaUser, FaLock } from "react-icons/fa";
 import "./landingpage.css";
 
 const Signup = () => {
@@ -34,19 +34,19 @@ const Signup = () => {
                   <FaUser className="input-icon" />
                   <input
                     type="text"
-                    id="username"
-                    name="username"
-                    placeholder="Choose Username"
+                    id="name"
+                    name="name"
+                    placeholder="Enter Your Name"
                     className="form-control"
                   />
                 </div>
                 <div className="form-group icon-input animation a4">
-                  <FaEnvelope className="input-icon" />
+                  <FaUser className="input-icon" />
                   <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    placeholder="Your Email"
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="Create Username"
                     className="form-control"
                   />
                 </div>
@@ -60,24 +60,14 @@ const Signup = () => {
                     className="form-control"
                   />
                 </div>
-                <div className="form-group icon-input animation a6">
-                  <FaLock className="input-icon" />
-                  <input
-                    type="password"
-                    id="confirm-password"
-                    name="confirm-password"
-                    placeholder="Confirm Password"
-                    className="form-control"
-                  />
-                </div>
                 <input 
                   type="submit" 
                   name="signup" 
                   value="Sign Up" 
-                  className="btn-submit animation a7" 
+                  className="btn-submit animation a6" 
                 />
                 <div className="auth-options">
-                  <p className="auth-text animation a8">
+                  <p className="auth-text animation a7">
                     Already have an account? <a href="/login" className="auth-link">Log In</a>
                   </p>
                 </div>
