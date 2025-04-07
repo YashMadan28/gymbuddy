@@ -2,7 +2,7 @@ import React from 'react';
 import { Typography, Button, Box, Toolbar } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import default_image from './assets/default_image.jpg';
-import './EditProfile.css';
+import './editprofile.css';
 
 const Profile = () => {
     const navigate = useNavigate();
