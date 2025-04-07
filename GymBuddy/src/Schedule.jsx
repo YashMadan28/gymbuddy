@@ -7,8 +7,6 @@ import "./styles/common.css";
 import "./styles/daygrid.css";
 import "./styles/timegrid.css";
 
-
-
 function CalendarPage() {
   const [events, setEvents] = useState([
     { title: "Chest Day", date: "2025-03-27" },

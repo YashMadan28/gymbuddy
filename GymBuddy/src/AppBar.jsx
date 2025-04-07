@@ -8,12 +8,12 @@ import './Animations.css';
 
 const Header = () => {
   return (
-    <AppBar 
-      position = "fixed" 
-      sx = {{ 
-        width: '100%', 
-        backgroundColor: 'black', 
-        height: '90px',
+    <AppBar
+      position="fixed"
+      sx={{
+        width: "100%",
+        backgroundColor: "black",
+        height: "90px",
         boxShadow: "none",
         }}
     > 
