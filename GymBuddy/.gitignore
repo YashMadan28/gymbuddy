@@ -12,7 +12,7 @@ dist
 dist-ssr
 *.local
 package-lock.json
-package.json
+gymbuddy-backend/AKY/gymbuddy-d7838-firebase-admins.json
 
 # Editor directories and files
 .vscode/*

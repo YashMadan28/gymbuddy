@@ -21,7 +21,7 @@ function CalendarPage() {
   };
 
   return (
-    <div style={{ maxWidth: "900px", margin: "auto" }}>
+    <div style={{ maxWidth: "900px", margin: "auto", paddingTop: '65px'}}>
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
