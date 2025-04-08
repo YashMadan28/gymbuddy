@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from './firebase';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 import AppLayout from "./AppLayout";
@@ -15,6 +17,7 @@ import Messages from "./Messages";
 import Schedule from "./Schedule";
 
 const App = () => {
+
   const [profileData, setProfileData] = useState({
     name: "",
     age: "",
@@ -44,6 +47,8 @@ const App = () => {
               />
             }
           />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/findgymbuddy" element={<FindGymBuddy />} />
           <Route path="/matches" element={<Matches />} />
           <Route path="/messages" element={<Messages />} />

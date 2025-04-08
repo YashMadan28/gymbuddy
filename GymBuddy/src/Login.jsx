@@ -1,10 +1,48 @@
-import React from "react";
+import React, { useRef } from "react";
 import { FaUser, FaLock } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "./firebase";
 import "./landingpage.css";
 
 const Login = () => {
+  const formRef = useRef(null);
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    const formElement = formRef.current;
+    if (!formElement) return;
+
+    const formData = new FormData(formElement);
+    const { email, password } = Object.fromEntries(formData.entries());
+
+    try {
+      const res = await signInWithEmailAndPassword(auth, email, password);
+      console.log("User signed in:", res.user);
+      
+      toast.success("Logged in successfully!", {
+        position: "top-right",
+        autoClose: 1000,
+        onClose: () => navigate("/")
+      });
+
+      formElement.reset();
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message, {
+        position: "top-right",
+        autoClose: 5000,
+      });
+    }
+  };
+
   return (
     <div className="landing-page-container">
+      <ToastContainer />
       <div id="app" className="h-100">
         <div className="landing-wrapper animation left">
           <div className="landing-wrapper-inner">
@@ -29,25 +67,25 @@ const Login = () => {
               </div>
             </header>
             <div className="main-form">
-              <form action="nothing" method="POST">
+              <form ref={formRef} onSubmit={handleLogin}>
                 <div className="form-group icon-input animation a3">
                   <FaUser className="input-icon" />
                   <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    placeholder="Enter Username"
+                    type="email"
+                    name="email"
+                    placeholder="Enter Email"
                     className="form-control"
+                    required
                   />
                 </div>
                 <div className="form-group icon-input animation a4">
                   <FaLock className="input-icon" />
                   <input
                     type="password"
-                    id="password"
                     name="password"
                     placeholder="Enter Password"
                     className="form-control"
+                    required
                   />
                 </div>
                 <input 
