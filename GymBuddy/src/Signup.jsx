@@ -1,10 +1,46 @@
-import React from "react";
-import { FaUser, FaLock } from "react-icons/fa";
+import React, { useRef } from "react";
+import { FaUser, FaLock, FaEnvelope } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "./firebase";
 import "./landingpage.css";
 
 const Signup = () => {
+  const formRef = useRef(null);
+  const navigate = useNavigate();
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+  
+    const formElement = formRef.current;
+    if (!formElement) return;
+  
+    const formData = new FormData(formElement);
+    const { email, password } = Object.fromEntries(formData.entries());
+  
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      
+      toast.success("Account created successfully!", {
+        position: "top-right",
+        autoClose: 1000,
+        onClose: () => navigate("/login")
+      });
+  
+      formElement.reset();
+    } catch (err) {
+      toast.error(err.message, {
+        position: "top-right",
+        autoClose: 5000,
+      });
+    }
+  };
+
   return (
     <div className="landing-page-container">
+      <ToastContainer />
       <div id="app" className="h-100">
         <div className="landing-wrapper animation left">
           <div className="landing-wrapper-inner">
@@ -29,40 +65,39 @@ const Signup = () => {
               </div>
             </header>
             <div className="main-form">
-              <form action="nothing" method="POST">
+              <form ref={formRef} onSubmit={handleRegister}>
                 <div className="form-group icon-input animation a3">
                   <FaUser className="input-icon" />
                   <input
                     type="text"
-                    id="name"
                     name="name"
                     placeholder="Enter Your Name"
                     className="form-control"
+                    required
                   />
                 </div>
                 <div className="form-group icon-input animation a4">
-                  <FaUser className="input-icon" />
+                  <FaEnvelope className="input-icon" />
                   <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    placeholder="Create Username"
+                    type="email"
+                    name="email"
+                    placeholder="Enter Email"
                     className="form-control"
+                    required
                   />
                 </div>
                 <div className="form-group icon-input animation a5">
                   <FaLock className="input-icon" />
                   <input
                     type="password"
-                    id="password"
                     name="password"
                     placeholder="Create Password"
                     className="form-control"
+                    required
                   />
                 </div>
                 <input 
                   type="submit" 
-                  name="signup" 
                   value="Sign Up" 
                   className="btn-submit animation a6" 
                 />
