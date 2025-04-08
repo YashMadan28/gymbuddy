@@ -7,7 +7,6 @@ import AppLayout from "./AppLayout";
 import Profile from "./Profile";
 import EditProfile from "./EditProfile";
 import MainPage from "./MainPage";
-import Signup from "./Signup";
 import Login from "./Login";
 import Signup from "./Signup";
 import FindGymBuddy from "./FindGymBuddy";
@@ -18,16 +17,6 @@ import Messages from "./Messages";
 import Schedule from "./Schedule";
 
 const App = () => {
-
-  useEffect(() => {
-    const unSub = onAuthStateChanged(auth, (user) => {
-      console.log(user);
-    });
-  
-    return () => {
-      unSub();
-    };
-  }, []);
 
   const [profileData, setProfileData] = useState({
     name: "",
