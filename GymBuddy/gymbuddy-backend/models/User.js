@@ -1,30 +1,15 @@
 const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
-  firebaseUid: { type: String, required: true, unique: true }, // Link to Firebase Auth
+  firebaseUid: { type: String, unique: true },
+  email: { type: String, required: true, unique: true},
   name: { type: String, required: true },
   age: { type: Number, required: true },
   gender: { type: String, required: true },
-  gym: { type: String },
   about: { type: String },
-  stats: {
-    weight: { type: Number },
-    targetWeight: { type: Number },
-    height: { type: Number },
-    age: { type: Number },
-    gender: { type: String },
-    calorieGoal: { type: Number },
-    fitnessGoal: { type: String },
-  },
-  messages: [
-    {
-      senderId: { type: String },
-      receiverId: { type: String },
-      content: { type: String },
-      timestamp: { type: Date, default: Date.now },
-    },
-  ],
+  gym: { type: String },
 });
 
-const User = mongoose.model('User', UserSchema);
+const User = mongoose.model('ProfileData', UserSchema, 'ProfileData');
+
 module.exports = User;
