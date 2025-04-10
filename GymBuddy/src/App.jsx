@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import "./App.css";
+
 import AppLayout from "./AppLayout";
 import Profile from "./Profile";
 import EditProfile from "./EditProfile";
@@ -16,8 +16,11 @@ import Stats from "./Stats";
 import Messages from "./Messages";
 import Schedule from "./Schedule";
 
+import "./App.css";
+
 const App = () => {
 
+  const [user, setUser] = useState(null);
   const [profileData, setProfileData] = useState({
     name: "",
     age: "",
@@ -26,6 +29,31 @@ const App = () => {
     about: "",
     image: null,
   });
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setUser(user);
+      if (user) {
+        try {
+          const response = await fetch(
+            `http://localhost:5000/api/users/${user.uid}`,
+            {
+              headers: {
+                'Authorization': `Bearer ${await user.getIdToken()}`
+              }
+            }
+          );
+          if (response.ok) {
+            const userData = await response.json();
+            setProfileData(userData);
+          }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    }
+  });
+    return () => unsubscribe();
+  }, []);
 
   return (
     <Router>

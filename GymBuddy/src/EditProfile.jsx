@@ -1,11 +1,52 @@
 import React, { useRef, useState } from "react";
-import { TextField, Button, Box, Toolbar } from "@mui/material";
+import { auth } from './firebase';
+import { TextField, Button, Box, Toolbar, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import default_image from "./assets/default_image.jpg";
-import "./editprofile.css";
 import EditGymDialog from './EditGymPopup';
+import {updateUserProfile } from './services/profile-api';
+import "./editprofile.css";
 
 const EditProfile = ({ profileData, setProfileData }) => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleSaveChanges = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      if(!auth.currentUser) {
+        throw new Error('No authenticated user found');
+      }
+
+      const updatedData = {
+        email: auth.currentUser.email,
+        name: profileData.name,
+        age: parseInt(profileData.age),
+        gender: profileData.gender,
+        gym: profileData.gym,
+        about: profileData.about
+      };
+
+      await updateUserProfile(auth.currentUser.uid, updatedData);
+      setProfileData(prev => ({
+        ...prev,
+        ...updatedData
+      }));
+      
+      navigate("/profile", {
+        state: { isOwnProfile: true, profileData } 
+      });
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      setError('Failed to save changes. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const fileInputRef = useRef(null);
   const [file, setFile] = useState(profileData.image || null);
 
@@ -41,8 +82,6 @@ const EditProfile = ({ profileData, setProfileData }) => {
       [field]: value,
     }));
   };
-
-  const navigate = useNavigate();
 
   return (
     <Box
@@ -292,12 +331,19 @@ const EditProfile = ({ profileData, setProfileData }) => {
         variant="contained"
         color="primary"
         sx={{ marginTop: 2 }}
-        onClick={() =>
+        onClick = {handleSaveChanges}
+        disabled = {loading}
+        /*onClick={() =>
           navigate("/profile", { state: { isOwnProfile: true, profileData } })
-        }
+        }*/
       >
-        Save Changes
+        {loading ? 'Saving...' : 'Save Changes'}
       </Button>
+      {error && (
+        <Typography color = "error" sx = {{ mt: 2 }}>
+          {error}
+        </Typography>
+      )}
     </div>
     </Box>
   );
