@@ -119,24 +119,22 @@ export const fetchOtherUserProfile = async (userId) => {
   }
 };
 
-// Creates a new user profile in the backend using Firebase data
 export const createUserProfile = async (name) => {
   try {
     const user = auth.currentUser;
     if (!user) throw new Error('No authenticated user');
 
-    const token = await user.getIdToken();
-
     const response = await fetch(`http://localhost:5000/api/users`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${await user.getIdToken()}`
       },
       body: JSON.stringify({
         firebaseUid: user.uid,
         email: user.email,
-        name: name
+        name: name,
+        profilePicture: "https://firebasestorage...default_image.jpg"
       })
     });
 
@@ -145,10 +143,9 @@ export const createUserProfile = async (name) => {
       throw new Error(errorData.message || 'Failed to create profile');
     }
 
-    return await response.json();
+    return { success: true, data: await response.json() };
   } catch (error) {
-    console.error('Error creating profile:', error);
-    throw error;
+    return { success: false, message: error.message };
   }
 };
 
