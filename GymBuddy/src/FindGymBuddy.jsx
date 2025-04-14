@@ -290,6 +290,8 @@ const FindGymBuddy = () => {
         </DialogActions>
       </Dialog>
     </Box>
+    </div>
+    </>
   );
 };
 
