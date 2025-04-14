@@ -9,7 +9,7 @@ function Matches() {
 
     // Navigate to the selected person's profile page
     const handleViewProfile = (profileData) => {
-        navigate('/profile', { state: { profileData } });
+        navigate('/other_profile', { state: { profileData } });
     };
     const numberOfProfiles = profiles.length;
 
@@ -68,7 +68,7 @@ function Matches() {
 
                         {/* Profile info and the 2 buttons */}
                         <Box sx={{ marginLeft: 2, flex: 1 }}>
-                            <Box sx={{ fontWeight: 'bold', marginBottom: 1 }}>
+                            <Box sx={{ fontWeight: 'bold', marginBottom: 1, color: 'black' }}>
                                 {profile.name}
                             </Box>
 
@@ -100,6 +100,7 @@ function Matches() {
 }
 
 export default Matches;
+
 
 
 

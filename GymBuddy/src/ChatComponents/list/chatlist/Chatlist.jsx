@@ -1,73 +1,49 @@
 import React, { useState } from "react";
 import "./chatlist.css";
+import defaultImage from '../../../assets/default_image.jpg';
+
 
 const Chatlist = () => {
   return (
     <div className="chatlist">
-      <div className="search">
-        <div className="searchBar">
-          <img src="/search.png" alt="" />
-          <input type="text" placeholder="Search" />
-        </div>
-      </div>
       <div className="item">
         <div className="avatar-wrapper">
           <img src="./avatar.png" alt="" />
           <div className="online-marker"></div>
         </div>
         <div className="texts">
-          <span>Adam Smith</span>
+          <span>Austin Smith</span>
+          <p>Absolutely. Let’s destroy it 🔥</p>
+        </div>
+      </div>
+      <div className="item">
+        <div className="avatar-wrapper">
+        <img src={defaultImage} alt="" />
+          <div className="online-marker"></div>
+        </div>
+        <div className="texts">
+          <span>David Miller</span>
           <p>Hey! How are you?</p>
         </div>
       </div>
       <div className="item">
         <div className="avatar-wrapper">
-          <img src="./avatar.png" alt="" />
+        <img src={defaultImage} alt="" />
           <div className="online-marker"></div>
         </div>
         <div className="texts">
-          <span>Adam Smith</span>
-          <p>Hey! How are you?</p>
+          <span>Sophia Taylor</span>
+          <p>Wassup</p>
         </div>
       </div>
       <div className="item">
         <div className="avatar-wrapper">
-          <img src="./avatar.png" alt="" />
+        <img src={defaultImage} alt="" />
           <div className="online-marker"></div>
         </div>
         <div className="texts">
-          <span>Adam Smith</span>
-          <p>Hey! How are you?</p>
-        </div>
-      </div>
-      <div className="item">
-        <div className="avatar-wrapper">
-          <img src="./avatar.png" alt="" />
-          <div className="online-marker"></div>
-        </div>
-        <div className="texts">
-          <span>Adam Smith</span>
-          <p>Hey! How are you?</p>
-        </div>
-      </div>
-      <div className="item">
-        <div className="avatar-wrapper">
-          <img src="./avatar.png" alt="" />
-          <div className="online-marker"></div>
-        </div>
-        <div className="texts">
-          <span>Adam Smith</span>
-          <p>Hey! How are you?</p>
-        </div>
-      </div>
-      <div className="item">
-        <div className="avatar-wrapper">
-          <img src="./avatar.png" alt="" />
-          <div className="online-marker"></div>
-        </div>
-        <div className="texts">
-          <span>Adam Smith</span>
-          <p>Hey! How are you?</p>
+          <span>Alex Taylor</span>
+          <p>Nice!</p>
         </div>
       </div>
     </div>
