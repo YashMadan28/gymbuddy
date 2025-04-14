@@ -24,3 +24,7 @@ gymbuddy-backend/AKY/gymbuddy-d7838-firebase-admins.json
 *.njsproj
 *.sln
 *.sw?
+
+# dotenv environment variables file
+.env
+

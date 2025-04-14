@@ -1,134 +1,129 @@
 import React, { useState, useEffect } from 'react';
 import { auth } from './firebase';
 import { Typography, Button, Box, Toolbar } from '@mui/material';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import default_image from './assets/default_image.jpg';
 import './editprofile.css';
+import { fetchUserProfile, fetchOtherUserProfile } from './services/profile-api';
 
+// Profile component handles both user's own profile and viewing others' profiles
 const Profile = () => {
+    // Navigation and route handling hooks
     const navigate = useNavigate();
     const location = useLocation();
-    const [userEmail, setUserEmail] = useState('');
-    const [profileData, setProfileData] = useState(null);
-    const [loading, setLoading]= useState(true);
-
-    useEffect(() => {
-        const fetchProfileData = async () => {
-            try {
-                const user = auth.currentUser;
-                if (user) {
-                    setUserEmail(user.email);
-                    const token = await user.getIdToken();
-                    console.log('Fetching profile for email', user.email); // Debugging line
-
-                    const response = await fetch(`http://localhost:5000/api/users/${user.email}`, {
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log('Received profile data:', data); // Debugging line
-                    setProfileData({
-                        name: data.name,
-                        age: data.age,
-                        gender: data.gender,
-                        gym: data.gym,
-                        about: data.about
-                    });
-                } else {
-                    console.error('Failed to fetch profile data');
-                }
-            }
-        } catch (error) {
-            console.error('Error fetching profile data:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const { userId } = useParams();
     
-    fetchProfileData();
-    }, []);
+    // State management for profile data and loading status
+    const [profileData, setProfileData] = useState({
+        name: '',
+        age: '',
+        gender: '',
+        gym: '',
+        about: '',
+        profilePicture: default_image
+    });
+    const [loading, setLoading] = useState(true);
 
-    /* Get the profile data (profile data is defined in app.jsx) passed from either the Profile
-     button in the App Bar, Back or Save Changes button in EditProfile,
-     or from the Matches page */
-    //const { profileData, isOwnProfile} = location.state || {};  
-    const profileToDisplay = profileData || location.state?.profileData;
-    const isOwnProfile = location.state?.isOwnProfile || true;
+    // Determine if this is the user's own profile
+    const isOwnProfile = !userId;
 
+    // Data fetching effect - runs when userId changes
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                // Fetch appropriate profile based on whether userId exists
+                const data = userId 
+                    ? await fetchOtherUserProfile(userId) 
+                    : await fetchUserProfile();
+                
+                // Update state with fetched data or defaults
+                setProfileData({
+                    name: data?.name || '',
+                    age: data?.age || '',
+                    gender: data?.gender || '',
+                    gym: data?.gym || '',
+                    about: data?.about || '',
+                    profilePicture: data?.profilePicture || default_image,
+                    ...(isOwnProfile && { email: data?.email || '' }) // Only include email for own profile
+                });
+            } catch (error) {
+                console.error('Error:', error);
+                navigate(userId ? '/matches' : '/'); // Redirect on error
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProfile();
+    }, [userId, navigate]);
+
+    // Loading state UI
     if (loading) {
-        return <Box sx = {{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
-            <Typography>Loading...</Typography>
-        </Box>;
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
+                <Typography>Loading...</Typography>
+            </Box>
+        );
     }
 
+    // Main profile display
     return (
-        <Box sx={{ justifyContent: 'center', maxWidth: 500, margin: 'auto', backgroundColor: 'default', padding: 3 }}>
-            <Toolbar /> 
-            {/* Conditionally render the name based on if user is viewing their own profile or another persons */}
-            <h2>{isOwnProfile? "Your Profile" : `${profileData?.name}'s Profile`}</h2>
+        <Box sx={{ justifyContent: 'center', maxWidth: 500, margin: 'auto', padding: 3 }}>
+            <Toolbar />
+            <h2>{isOwnProfile ? "Your Profile" : `${profileData.name}'s Profile`}</h2>
 
-            {isOwnProfile&& (
-                <div className = "profileView" >
-                    <Button variant="contained" color="primary" onClick={() => navigate('/profile/edit')}>
+            {/* Edit button only appears on own profile */}
+            {isOwnProfile && (
+                <div className="profileView">
+                    <Button 
+                        variant="contained" 
+                        color="primary" 
+                        onClick={() => navigate('/profile/edit', { 
+                            state: { profileData } 
+                        })}
+                    >
                         Edit Profile
                     </Button>
                 </div>
             )}
 
+            {/* Profile image with fallback to default */}
             <div className="image-container">
-                <img src={profileData?.image || default_image} alt="Profile" className="profile-image" />
+                <img 
+                    src={profileData.profilePicture} 
+                    alt="Profile" 
+                    className="profile-image"
+                    onError={(e) => { e.target.src = default_image }} 
+                />
             </div>
 
-            <Typography variant = "h6"
-                sx = {{
-                    textAlign: 'center',
-                    paddingTop: '10px',
-                    paddingBottom: '10px',
-                    color: 'rgba(255, 255, 255, 0.7)'
-                }}
-            >
-                {userEmail}
+            {/* Email display (only for own profile) */}
+            {isOwnProfile && profileData.email && (
+                <Typography variant="h6" sx={{ textAlign: 'center', py: 2 }}>
+                    {profileData.email}
+                </Typography>
+            )}
+
+            {/* Profile information fields */}
+            <ProfileField label="Name" value={profileData.name} />
+            <ProfileField label="Age" value={profileData.age} />
+            <ProfileField label="Gender" value={profileData.gender} />
+            <ProfileField label="Gym" value={profileData.gym} />
+            
+            {/* About me section */}
+            <Typography variant="h6" sx={{ pt: 2, pb: 1 }}>
+                About Me:
+            </Typography>
+            <Typography variant="body1">
+                {profileData.about || 'Not specified'}
             </Typography>
 
-            <Typography variant="h6" sx={{ paddingTop: '10px', paddingBottom: '10px' }}>
-                Name: <span style={{ fontWeight: 'normal', color: 'text.primary' }}>
-                            {profileData?.name}
-                        </span>
-            </Typography>
-            <Typography variant="h6" sx={{ paddingTop: '10px', paddingBottom: '10px' }}>
-                Age: <span style={{ fontWeight: 'normal', color: 'text.primary' }}>
-                            {profileData?.age}
-                        </span>
-            </Typography>
-            <Typography variant="h6" sx={{ paddingTop: '10px', paddingBottom: '10px' }}>
-                Gender: <span style={{ fontWeight: 'normal', color: 'text.primary' }}>
-                            {profileData?.gender}
-                        </span>
-            </Typography>
-            <Typography variant="h6" sx={{ paddingTop: '10px', paddingBottom: '10px' }}>
-                Gym: <span style={{ fontWeight: 'normal', color: 'text.primary' }}>
-                            {profileData?.gym}
-                        </span>
-            </Typography>
-            <Typography variant="h6" sx={{ paddingTop: '10px', paddingBottom: '10px' }}>
-                About Me:<br/> <Typography variant="body1" className="about-text" sx={{ fontWeight: 'normal' }}>
-                                {profileData?.about}
-                                </Typography>
-            </Typography>
-            <br />
-            <br />
-            <div className = "profileView">
+            {/* Back button - navigates differently based on context */}
+            <div className="profileView">
                 <Button 
                     variant="contained" 
-                    color="primary" 
-                    sx={{ marginBottom: 2 }}
-                    /* If user is viewing their own profile and clicks on Back button, takes them to home page.
-                        Otherwise, if user was viewing someone else's profile and clicks on Back button,
-                        takes them back to the Matches page */
-                    onClick={() => navigate(isOwnProfile? '/' : '/matches')}
+                    sx={{ mb: 2, mt: 3 }}
+                    onClick={() => navigate(isOwnProfile ? '/' : '/matches')}
                 >
                     Back
                 </Button>
@@ -136,6 +131,15 @@ const Profile = () => {
         </Box>
     );
 };
+
+// Reusable component for profile fields
+const ProfileField = ({ label, value }) => (
+    <Typography variant="h6" sx={{ py: 1 }}>
+        {label}: <span style={{ fontWeight: 'normal' }}>
+            {value || 'Not specified'}
+        </span>
+    </Typography>
+);
 
 export default Profile;
 
