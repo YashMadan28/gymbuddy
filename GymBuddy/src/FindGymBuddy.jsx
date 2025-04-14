@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TextField, Button, Box, MenuItem, Typography, CircularProgress, Dialog, DialogTitle, DialogActions } from '@mui/material';
 import { GoogleMap, Marker, useLoadScript } from '@react-google-maps/api';
-
+import './FindGymBuddy.css'
 const states = [
   'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia',
   'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts',
@@ -133,75 +133,105 @@ const FindGymBuddy = () => {
   }
 
   return (
-    <Box 
-      sx={{ 
-        backgroundColor: 'white',
-        padding: '20px', 
-        borderRadius: '8px', 
-        boxShadow: 3,
-        width: '100%', 
-        maxWidth: '600px',
-        margin: 'auto', 
-        display: 'flex', 
-        flexDirection: 'column', 
-        gap: 2,
-        marginTop: '50px',
-      }}
-    >
-      <Typography variant="h4" gutterBottom>
-        Find Gym Buddy
-      </Typography>
-      
-      <form onSubmit={handleSubmit}>
-        <TextField
-          label="Gym Name"
-          name="gymName"
-          value={formData.gymName}
-          onChange={(e) => setFormData({ ...formData, gymName: e.target.value })}
-          error={errors.gymName}
-          helperText={errors.gymName ? 'Gym name is required' : ''}
-          fullWidth
-          margin="normal"
-        />
-        
-        <TextField
-          label="City"
-          name="city"
-          value={formData.city}
-          onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-          error={errors.city}
-          helperText={errors.city ? 'City is required' : ''}
-          fullWidth
-          margin="normal"
-        />
-        
-        <TextField
-          label="State"
-          name="state"
-          value={formData.state}
-          onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-          error={errors.state}
-          helperText={errors.state ? 'State is required' : ''}
-          select
-          fullWidth
-          margin="normal"
+  <>
+    <div className = "backdrop-image" />
+      <div className = "scroll-container">
+        <Box
+          className = "glass-effect" 
+          sx={{ 
+            padding: '20px', 
+            //borderRadius: '8px', 
+            //boxShadow: 3,
+            //width: '100%', 
+            maxWidth: '650px',
+            margin: 'auto', 
+            display: 'flex', 
+            flexDirection: 'column', 
+            gap: 2,
+            marginTop: '50px',
+            overflow: 'hidden',
+          }}
         >
-          {states.map((state) => (
-            <MenuItem key={state} value={state}>
-              {state}
-            </MenuItem>
-          ))}
-        </TextField>
-        
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, marginTop: '10px' }}>
-          <Button variant="contained" color="secondary" onClick={() => navigate('/')}>
-            Back
-          </Button>
-          <Button type="submit" variant="contained" color="primary">
-            Search
-          </Button>
-        </Box>
-      </form>
+          <Typography variant="h4" gutterBottom>
+            Find Gym Buddy
+          </Typography>
+          
+          <form onSubmit={handleSubmit}>
+            <TextField
+              label="Gym Name"
+              name="gymName"
+              value={formData.gymName}
+              onChange={(e) => setFormData({ ...formData, gymName: e.target.value })}
+              error={errors.gymName}
+              helperText={errors.gymName ? 'Gym name is required' : ''}
+              fullWidth
+              margin="normal"
+              sx = {{
+                input: { color: 'white' },
+                label: { color: 'rgba(0,0,0,0.6)', '&.Mui-focused': { color: 'white' }
+              },
+              '& .MuiOutlinedInput-root': {
+                '& fieldset': { borderColor: 'rgba(0,0,0,0.3)'},
+                '&:hover fieldset': { borderColor: 'rgba(0,0,0,0.5)' },
+                '&.Mui-focused fieldset': { borderColor: 'white'}
+              },
+              }}
+            />
+            
+            <TextField
+              label="City"
+              name="city"
+              value={formData.city}
+              onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+              error={errors.city}
+              helperText={errors.city ? 'City is required' : ''}
+              fullWidth
+              margin="normal"
+              sx = {{
+                input: { color: 'white' },
+                label: { color: 'rgba(0,0,0,0.6)', '&.Mui-focused': { color: 'white' }
+              },
+              '& .MuiOutlinedInput-root': {
+                '& fieldset': { borderColor: 'rgba(0,0,0,0.3)'},
+                '&:hover fieldset': { borderColor: 'rgba(0,0,0,0.5)' },
+                '&.Mui-focused fieldset': { borderColor: 'white'}
+              },
+              }}
+            />
+            
+            <TextField
+              label="State"
+              name="state"
+              value={formData.state}
+              onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+              error={errors.state}
+              helperText={errors.state ? 'State is required' : ''}
+              select
+              fullWidth
+              margin="normal"
+              sx = {{
+                input: { color: 'white' },
+                label: { color: 'rgba(0,0,0,0.6)', '&.Mui-focused': { color: 'white' }
+              },
+              
+              }}
+            >
+              {states.map((state) => (
+                <MenuItem key={state} value={state}>
+                  {state}
+                </MenuItem>
+              ))}
+            </TextField>
+            
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, marginTop: '10px' }}>
+              <Button variant="contained" color="secondary" onClick={() => navigate('/')}>
+                Back
+              </Button>
+              <Button type="submit" variant="contained" color="primary">
+                Search
+              </Button>
+            </Box>
+          </form>
 
       {/* Show a loading spinner while waiting for the API response */}
       {loading && (

@@ -12,6 +12,9 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@firebase/app": "^0.11.3",
+    "@firebase/auth": "^1.9.1",
+    "@firebase/firestore": "^4.7.10",
     "@fullcalendar/bootstrap5": "^6.1.15",
     "@fullcalendar/core": "^6.1.15",
     "@fullcalendar/daygrid": "^6.1.15",
@@ -26,6 +29,7 @@
     "firebase": "^11.4.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-toastify": "^11.0.5",
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.2.0"
   },

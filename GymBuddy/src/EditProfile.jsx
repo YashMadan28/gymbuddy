@@ -39,8 +39,6 @@ const EditProfile = () => {
     }));
   };
 
-  const navigate = useNavigate();
-
     return (
         <Box
             sx={{
@@ -258,12 +256,19 @@ const EditProfile = () => {
         variant="contained"
         color="primary"
         sx={{ marginTop: 2 }}
-        onClick={() =>
+        onClick = {handleSaveChanges}
+        disabled = {loading}
+        /*onClick={() =>
           navigate("/profile", { state: { isOwnProfile: true, profileData } })
-        }
+        }*/
       >
-        Save Changes
+        {loading ? 'Saving...' : 'Save Changes'}
       </Button>
+      {error && (
+        <Typography color = "error" sx = {{ mt: 2 }}>
+          {error}
+        </Typography>
+      )}
     </div>
     </Box>
   );
