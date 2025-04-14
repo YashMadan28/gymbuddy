@@ -3,9 +3,11 @@ const path = require('path');
 const serviceAccount = require(path.join(__dirname, '../AKY/gymbuddy-d7838-firebase-admins.json')); 
 
 admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
+    credential: admin.credential.cert(serviceAccount),
+    storageBucket: "gymbuddy-d7838.firebasestorage.app"
 });
 
+const bucket = admin.storage().bucket();
 
 const verifyToken = async (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];

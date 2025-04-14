@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TextField, Button, Box, MenuItem, Typography, CircularProgress, Dialog, DialogTitle, DialogActions } from '@mui/material';
+import { TextField, Button, Box, MenuItem, Typography, CircularProgress } from '@mui/material';
 import { GoogleMap, Marker, useLoadScript } from '@react-google-maps/api';
-import './FindGymBuddy.css'
+import './FindGymBuddy.css';
+
+// List of US states for dropdown
 const states = [
   'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia',
   'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts',
@@ -13,19 +15,21 @@ const states = [
 ];
 
 const FindGymBuddy = () => {
+  // Form state management
   const [formData, setFormData] = useState({
     gymName: '',
     city: '',
     state: '',
   });
   
+  // Form validation errors
   const [errors, setErrors] = useState({
     gymName: false,
     city: false,
     state: false,
   });
 
-  // Changed to store multiple locations
+  // Location search results
   const [locations, setLocations] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -133,16 +137,16 @@ const FindGymBuddy = () => {
   }
 
   return (
-  <>
-    <div className = "backdrop-image" />
-      <div className = "scroll-container">
+    <>
+      {/* Background image */}
+      <div className="backdrop-image" />
+      
+      {/* Main content container */}
+      <div className="scroll-container">
         <Box
-          className = "glass-effect" 
+          className="glass-effect" 
           sx={{ 
-            padding: '20px', 
-            //borderRadius: '8px', 
-            //boxShadow: 3,
-            //width: '100%', 
+            padding: '20px',
             maxWidth: '650px',
             margin: 'auto', 
             display: 'flex', 
@@ -150,13 +154,17 @@ const FindGymBuddy = () => {
             gap: 2,
             marginTop: '50px',
             overflow: 'hidden',
+            color: 'white'
           }}
         >
-          <Typography variant="h4" gutterBottom>
+          {/* Page header */}
+          <Typography variant="h4" gutterBottom sx={{ color: 'white' }}>
             Find Gym Buddy
           </Typography>
           
+          {/* Search form */}
           <form onSubmit={handleSubmit}>
+            {/* Gym name input */}
             <TextField
               label="Gym Name"
               name="gymName"
@@ -166,18 +174,21 @@ const FindGymBuddy = () => {
               helperText={errors.gymName ? 'Gym name is required' : ''}
               fullWidth
               margin="normal"
-              sx = {{
+              sx={{
                 input: { color: 'white' },
-                label: { color: 'rgba(0,0,0,0.6)', '&.Mui-focused': { color: 'white' }
-              },
-              '& .MuiOutlinedInput-root': {
-                '& fieldset': { borderColor: 'rgba(0,0,0,0.3)'},
-                '&:hover fieldset': { borderColor: 'rgba(0,0,0,0.5)' },
-                '&.Mui-focused fieldset': { borderColor: 'white'}
-              },
+                label: { color: 'rgba(255,255,255,0.7)', '&.Mui-focused': { color: 'white' } },
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': { borderColor: 'rgba(255,255,255,0.3)'},
+                  '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.5)' },
+                  '&.Mui-focused fieldset': { borderColor: 'white'}
+                },
+                '& .MuiFormHelperText-root': {
+                  color: 'rgba(255,255,255,0.7)'
+                }
               }}
             />
             
+            {/* City input */}
             <TextField
               label="City"
               name="city"
@@ -187,18 +198,21 @@ const FindGymBuddy = () => {
               helperText={errors.city ? 'City is required' : ''}
               fullWidth
               margin="normal"
-              sx = {{
+              sx={{
                 input: { color: 'white' },
-                label: { color: 'rgba(0,0,0,0.6)', '&.Mui-focused': { color: 'white' }
-              },
-              '& .MuiOutlinedInput-root': {
-                '& fieldset': { borderColor: 'rgba(0,0,0,0.3)'},
-                '&:hover fieldset': { borderColor: 'rgba(0,0,0,0.5)' },
-                '&.Mui-focused fieldset': { borderColor: 'white'}
-              },
+                label: { color: 'rgba(255,255,255,0.7)', '&.Mui-focused': { color: 'white' } },
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': { borderColor: 'rgba(255,255,255,0.3)'},
+                  '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.5)' },
+                  '&.Mui-focused fieldset': { borderColor: 'white'}
+                },
+                '& .MuiFormHelperText-root': {
+                  color: 'rgba(255,255,255,0.7)'
+                }
               }}
             />
             
+            {/* State dropdown */}
             <TextField
               label="State"
               name="state"
@@ -209,20 +223,28 @@ const FindGymBuddy = () => {
               select
               fullWidth
               margin="normal"
-              sx = {{
-                input: { color: 'white' },
-                label: { color: 'rgba(0,0,0,0.6)', '&.Mui-focused': { color: 'white' }
-              },
-              
+              sx={{
+                '& .MuiSelect-select': { color: 'white' },
+                '& .MuiInputLabel-root': { color: 'rgba(255,255,255,0.7)' },
+                '& .MuiSvgIcon-root': { color: 'white' },
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': { borderColor: 'rgba(255,255,255,0.3)'},
+                  '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.5)' },
+                  '&.Mui-focused fieldset': { borderColor: 'white'}
+                },
+                '& .MuiFormHelperText-root': {
+                  color: 'rgba(255,255,255,0.7)'
+                }
               }}
             >
               {states.map((state) => (
-                <MenuItem key={state} value={state}>
+                <MenuItem key={state} value={state} sx={{ color: 'black' }}>
                   {state}
                 </MenuItem>
               ))}
             </TextField>
             
+            {/* Form action buttons */}
             <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, marginTop: '10px' }}>
               <Button variant="contained" color="secondary" onClick={() => navigate('/')}>
                 Back

@@ -11,30 +11,31 @@ const EditProfile = () => {
   };
 
   const handlePictureChange = (event) => {
-    const selectedFile = event.target.files[0];
-    if (selectedFile) {
-      const imageUrl = URL.createObjectURL(selectedFile);
-      setFile(imageUrl);
-      setProfileData(prev => ({ ...prev, image: imageUrl }));
+    const file = event.target.files[0];
+    if (file) {
+      setSelectedImageFile(file);
+      const previewURL = URL.createObjectURL(file);
+      setEditedProfile(prev => ({ 
+        ...prev, 
+        profilePicture: previewURL 
+      }));
     }
   };
 
-    const [editDialogOpen, setEditDialogOpen] = useState(false);
-    const [gymData, setGymData] = useState({
-      gymName: '',
-      city: '',
-      state: '',
-      location: null
-    });
-  
-    const handleSaveGym = (newData) => {
-      setGymData(newData);
-      // save to the backend
-      };
+  // Handle gym selection from popup
+  const handleSaveGym = (selectedGym) => {
+    setEditedProfile(prev => ({
+      ...prev,
+      gym: `${selectedGym.gymName}, ${selectedGym.address}`,
+      gymPlaceId: selectedGym.place_id
+    }));
+    setEditDialogOpen(false);
+  };
 
+  // Generic input change handler
   const handleInputChange = (field, value) => {
-    setProfileData((prevData) => ({
-      ...prevData,
+    setEditedProfile(prev => ({
+      ...prev,
       [field]: value,
     }));
   };
@@ -106,170 +107,81 @@ const EditProfile = () => {
         label="Age"
         variant="outlined"
         fullWidth
-        margin="normal"
-        value={profileData.age}
+        sx={fieldStyle}
+        value={editedProfile.age}
         onChange={(e) => handleInputChange("age", e.target.value)}
-        placeholder="Enter your age"
-        sx={{
-          "& .MuiInputLabel-root": {
-            color: "rgba(255, 255, 255, 0.6)", 
-            "&.Mui-focused": {
-              color: "rgba(255, 255, 255, 0.8)" 
-            },
-          },
-          "& .MuiOutlinedInput-root": {
-            color: "rgba(255, 255, 255, 0.9)",
-            "& fieldset": {
-              borderColor: "rgba(255, 255, 255, 0.5)",
-            },
-            "&:hover fieldset": {
-              borderColor: "rgba(255, 255, 255, 0.7)",
-              borderWidth: "1px",
-            },
-            "&.Mui-focused fieldset": {
-              borderColor: "rgba(255, 255, 255, 0.9) !important",
-              borderWidth: "2px",
-            },
-          },
-          "& .MuiInputBase-input::placeholder": {
-            color: "rgba(255, 255, 255, 0.4)",
-          },
-        }}
+        error={formSubmitted && (isNaN(editedProfile.age) || editedProfile.age < 13 || editedProfile.age > 120)}
+        helperText={formSubmitted && (isNaN(editedProfile.age) || editedProfile.age < 13 || editedProfile.age > 120) ? "Age must be between 13 and 120" : ""}
       />
 
-      <TextField
-        label="Gender"
-        variant="outlined"
-        fullWidth
-        margin="normal"
-        value={profileData.gender}
-        onChange={(e) => handleInputChange("gender", e.target.value)}
-        placeholder="Enter your gender"
-        sx={{
-          "& .MuiInputLabel-root": {
-            color: "rgba(255, 255, 255, 0.6)",
-            "&.Mui-focused": {
-              color: "rgba(255, 255, 255, 0.8)"
-            },
-          },
-          "& .MuiOutlinedInput-root": {
-            color: "rgba(255, 255, 255, 0.9)",
-            "& fieldset": {
-              borderColor: "rgba(255, 255, 255, 0.5)",
-            },
-            "&:hover fieldset": {
-              borderColor: "rgba(255, 255, 255, 0.7)",
-              borderWidth: "1px",
-            },
-            "&.Mui-focused fieldset": {
-              borderColor: "rgba(255, 255, 255, 0.9) !important",
-              borderWidth: "2px",
-            },
-          },
-          "& .MuiInputBase-input::placeholder": {
-            color: "rgba(255, 255, 255, 0.4)",
-          },
-        }}
-      />
+      {/* Gender dropdown */}
+      <FormControl fullWidth sx={fieldStyle}>
+        <InputLabel id="gender-label">Gender</InputLabel>
+        <Select
+          labelId="gender-label"
+          value={editedProfile.gender || ''}
+          onChange={(e) => handleInputChange("gender", e.target.value)}
+          label="Gender"
+          sx={{ color: "white", textAlign: 'left' }}
+        >
+          {genderOptions.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
 
+      {/* Gym field with popup */}
       <TextField
         label="Gym"
         variant="outlined"
         fullWidth
-        margin="normal"
-        value={profileData.gym}
+        sx={fieldStyle}
+        value={editedProfile.gym}
         onClick={() => setEditDialogOpen(true)}
-        sx={{
-          "& .MuiInputLabel-root": {
-            color: "rgba(255, 255, 255, 0.6)",
-            "&.Mui-focused": {
-              color: "rgba(255, 255, 255, 0.8)"
-            },
-          },
-          "& .MuiOutlinedInput-root": {
-            color: "rgba(255, 255, 255, 0.9)",
-            "& fieldset": {
-              borderColor: "rgba(255, 255, 255, 0.5)",
-            },
-            "&:hover fieldset": {
-              borderColor: "rgba(255, 255, 255, 0.7)",
-              borderWidth: "1px",
-            },
-            "&.Mui-focused fieldset": {
-              borderColor: "rgba(255, 255, 255, 0.9) !important",
-              borderWidth: "2px",
-            },
-          },
-          "& .MuiInputBase-input::placeholder": {
-            color: "rgba(255, 255, 255, 0.4)",
-          },
-        }}
+        inputProps={{ readOnly: true }}
       />
-      <EditGymDialog
+
+      {/* Gym selection popup */}
+      <EditGymPopup
         open={editDialogOpen}
         onClose={() => setEditDialogOpen(false)}
         onSave={handleSaveGym}
         initialData={{
-          gymName: gymData.gymName,
-          city: gymData.city,
-          state: gymData.state
+          gymName: editedProfile.gym.split(',')[0] || '',
+          city: '',
+          state: ''
         }}
       />
 
-
+      {/* About me textarea */}
       <TextField
         label="About Me"
         variant="outlined"
         fullWidth
-        margin="normal"
-        value={profileData.about}
+        sx={fieldStyle}
+        value={editedProfile.about}
         onChange={(e) => handleInputChange("about", e.target.value)}
-        placeholder="About Me"
-        sx={{
-          "& .MuiInputLabel-root": {
-            color: "rgba(255, 255, 255, 0.6)",
-            "&.Mui-focused": {
-              color: "rgba(255, 255, 255, 0.8)"
-            },
-          },
-          "& .MuiOutlinedInput-root": {
-            color: "rgba(255, 255, 255, 0.9)",
-            "& fieldset": {
-              borderColor: "rgba(255, 255, 255, 0.5)",
-            },
-            "&:hover fieldset": {
-              borderColor: "rgba(255, 255, 255, 0.7)",
-              borderWidth: "1px",
-            },
-            "&.Mui-focused fieldset": {
-              borderColor: "rgba(255, 255, 255, 0.9) !important",
-              borderWidth: "2px",
-            },
-          },
-          "& .MuiInputBase-input::placeholder": {
-            color: "rgba(255, 255, 255, 0.4)",
-          },
-        }}
+        multiline
+        rows={4}
       />
-    <div className="profileView">
-      <Button
-        variant="contained"
-        color="primary"
-        sx={{ marginTop: 2 }}
-        onClick = {handleSaveChanges}
-        disabled = {loading}
-        /*onClick={() =>
-          navigate("/profile", { state: { isOwnProfile: true, profileData } })
-        }*/
-      >
-        {loading ? 'Saving...' : 'Save Changes'}
-      </Button>
-      {error && (
-        <Typography color = "error" sx = {{ mt: 2 }}>
-          {error}
-        </Typography>
-      )}
-    </div>
+
+      {/* Save changes button */}
+      <div className="profileView">
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ ...fieldStyle, marginBottom: 2, color: "white" }}
+          onClick={handleSaveChanges}
+          disabled={loading}
+        >
+          {loading ? 'Saving...' : 'Save Changes'}
+        </Button>
+      </div>
+
+      {/* Error display */}
+      {error && <Typography color="error" sx={{ mt: 2 }}>{error}</Typography>}
     </Box>
   );
 };

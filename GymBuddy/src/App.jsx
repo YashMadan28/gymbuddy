@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
 import AppLayout from "./AppLayout";
 import Profile from "./Profile";
 import EditProfile from "./EditProfile";
@@ -15,78 +14,43 @@ import WorkoutLibrary from "./WorkoutLibrary";
 import Stats from "./Stats";
 import Messages from "./Messages";
 import Schedule from "./Schedule";
-
 import "./App.css";
+import Other_profile from "./Other_profile";
 
 const App = () => {
+// Initialize a piece of state to store the authenticated user
+const [user, setUser] = useState(null);
 
-  const [user, setUser] = useState(null);
-  const [profileData, setProfileData] = useState({
-    name: "",
-    age: "",
-    gender: "",
-    gym: "",
-    about: "",
-    image: null,
+// useEffect runs once when the component mounts
+useEffect(() => {
+  // Listen for changes to the authentication state (for example...user logs in/out)
+  const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    // Update the 'user' state with the current authenticated user
+    //  (or null if not signed in)
+    setUser(currentUser);
   });
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setUser(user);
-      if (user) {
-        try {
-          const response = await fetch(
-            `http://localhost:5000/api/users/${user.uid}`,
-            {
-              headers: {
-                'Authorization': `Bearer ${await user.getIdToken()}`
-              }
-            }
-          );
-          if (response.ok) {
-            const userData = await response.json();
-            setProfileData(userData);
-          }
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      }
-    }
-  });
-    return () => unsubscribe();
-  }, []);
+  // Cleanup function to unsubscribe from the listener when the component unmounts
+  return unsubscribe;
+}, []);
 
   return (
     <Router>
       <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
         <Route element={<AppLayout />}>
           <Route path="/" element={<MainPage />} />
-          <Route
-            path="/profile"
-            element={<Profile profileData={profileData} />}
-          />
-          <Route
-            path="/profile/edit"
-            element={
-              <EditProfile
-                profileData={profileData}
-                setProfileData={setProfileData}
-              />
-            }
-          />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/other_profile" element={<Other_profile />} />
+          <Route path="/profile/:userId" element={<Profile />} />
+          <Route path="/profile/edit" element={<EditProfile />} />
           <Route path="/findgymbuddy" element={<FindGymBuddy />} />
           <Route path="/matches" element={<Matches />} />
           <Route path="/messages" element={<Messages />} />
           <Route path="/stats" element={<Stats />} />
-          <Route path="/Schedule" element={<Schedule />} />
+          <Route path="/schedule" element={<Schedule />} />
           <Route path="/workout_library" element={<WorkoutLibrary />} />
-          {/*<Route index element = {<WorkoutLibrary />} />*/}
-          {/*<Route path = "splits" element = {<SplitView />} />
-          <Route path = "muscle-groups" element = {<MuscleGroupView />} />*/}
-          {/*</Route>*/}
         </Route>
       </Routes>
     </Router>
