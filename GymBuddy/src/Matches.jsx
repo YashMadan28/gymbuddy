@@ -1,17 +1,58 @@
-import React, { useState } from 'react';
-import { profiles } from './profiles';
-import { Box, Button, Typography, TextField, Dialog, DialogActions, DialogContent, IconButton, Toolbar } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Box, Button, Typography, CircularProgress, Toolbar, Avatar } from '@mui/material';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { fetchUsersByGym } from './services/profile-api';
 
 function Matches() {
     const navigate = useNavigate();
+    const location = useLocation();
+    const [profiles, setProfiles] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    // Navigate to the selected person's profile page
-    const handleViewProfile = (profileData) => {
-        navigate('/other_profile', { state: { profileData } });
+    // Get the location data passed from FindGymBuddy
+    const { location: gymLocation } = location.state || {};
+
+    useEffect(() => {
+        if (!gymLocation?.place_id) {
+            navigate('/FindGymBuddy');
+            return;
+        }
+
+        const loadMatches = async () => {
+            try {
+                setLoading(true);
+                const response = await fetchUsersByGym({ 
+                    place_id: gymLocation.place_id 
+                });
+                
+                if (response.success) {
+                    setProfiles(response.data || []);
+                } else {
+                    setError(response.message || 'Failed to load matches');
+                }
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadMatches();
+    }, [gymLocation, navigate]);
+
+    const handleViewProfile = (profile) => {
+        navigate('/other_profile', { 
+            state: { 
+                profileData: profile,
+                userId: profile.firebaseUid 
+            } 
+        });
     };
-    const numberOfProfiles = profiles.length;
+
+    if (!gymLocation) {
+        return null; // Will redirect anyway
+    }
 
     return (
         <Box sx={{ padding: 3, maxWidth: 800, margin: 'auto' }}>
@@ -24,6 +65,7 @@ function Matches() {
             >
                 Back
             </Button>
+            
             <Typography 
                 variant="h5" 
                 sx={{
@@ -33,68 +75,92 @@ function Matches() {
                     marginTop: 4,
                 }}
             >
-                {numberOfProfiles} Matches Found
+                {loading ? 'Loading...' : `${profiles.length} Matches Found`}
             </Typography>
 
-            {/* Shows list of profiles */}
-            <Box sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 2,
-                maxHeight: '80vh',
-                overflowY: 'auto',
-            }}>
-                {profiles.map((profile) => (
-                    <Box key={profile.id} sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        padding: 1,
-                        border: '1px solid #ddd',
-                        borderRadius: 2,
-                        boxShadow: 2,
-                        backgroundColor: 'white',
-                    }}>
-                        {/* Profile image */}
-                        <img 
-                            src={profile.image || '/path/to/default-image.jpg'}
-                            alt={profile.name}
-                            style={{
-                                width: '150px',
-                                height: '150px',
-                                borderRadius: '50%',
-                                objectFit: 'cover'
-                            }}
-                        />
+            {loading && (
+                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                    <CircularProgress />
+                </Box>
+            )}
 
-                        {/* Profile info and the 2 buttons */}
-                        <Box sx={{ marginLeft: 2, flex: 1 }}>
-                            <Box sx={{ fontWeight: 'bold', marginBottom: 1, color: 'black' }}>
-                                {profile.name}
-                            </Box>
+            {error && (
+                <Typography color="error" sx={{ mb: 2 }}>
+                    Error: {error}
+                </Typography>
+            )}
 
-                            <Box sx={{ marginBottom: 2 }}>
-                                <Button 
-                                    variant="contained"
-                                    color="success"
-                                    onClick={() => handleViewProfile(profile)}
-                                    sx={{ marginRight: 2 }}
-                                    size="small"
-                                >
-                                    View Profile
-                                </Button>
-                                <Button 
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={() => navigate("/messages")}
-                                    size="small"
-                                >
-                                    Message
-                                </Button>
+            {!loading && !error && (
+                <Box sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 2,
+                    maxHeight: '80vh',
+                    overflowY: 'auto',
+                }}>
+                    {profiles.map((profile) => (
+                        <Box key={profile.firebaseUid} sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            padding: 2,
+                            border: '1px solid #ddd',
+                            borderRadius: 2,
+                            boxShadow: 2,
+                            backgroundColor: 'white',
+                        }}>
+                            <Avatar 
+                                src={profile.profilePicture}
+                                alt={profile.name}
+                                sx={{ 
+                                    width: 80, 
+                                    height: 80,
+                                    mr: 2 
+                                }}
+                            />
+
+                            <Box sx={{ flex: 1 }}>
+                                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
+                                    {profile.name}
+                                </Typography>
+                                <Typography variant="body2" sx={{ mb: 1 }}>
+                                    Age: {profile.age || 'Not specified'}
+                                </Typography>
+                                <Typography variant="body2" sx={{ mb: 2 }}>
+                                    Gender: {profile.gender || 'Not specified'}
+                                </Typography>
+
+                                <Box>
+                                    <Button 
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={() => handleViewProfile(profile)}
+                                        sx={{ mr: 2 }}
+                                        size="small"
+                                    >
+                                        View Profile
+                                    </Button>
+                                    <Button 
+                                        variant="contained"
+                                        color="secondary"
+                                        onClick={() => navigate("/messages", { 
+                                            state: { recipientId: profile.firebaseUid }
+                                        })}
+                                        size="small"
+                                    >
+                                        Message
+                                    </Button>
+                                </Box>
                             </Box>
                         </Box>
-                    </Box>
-                ))}
-            </Box>
+                    ))}
+
+                    {profiles.length === 0 && (
+                        <Typography sx={{ color: 'white', textAlign: 'center' }}>
+                            No matches found at this gym. Be the first to check in!
+                        </Typography>
+                    )}
+                </Box>
+            )}
         </Box>
     );
 }
