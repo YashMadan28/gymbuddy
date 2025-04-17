@@ -15,7 +15,6 @@ import Stats from "./Stats";
 import Messages from "./Messages";
 import Schedule from "./Schedule";
 import "./App.css";
-import Other_profile from "./Other_profile";
 
 const App = () => {
 // Initialize a piece of state to store the authenticated user
@@ -42,7 +41,6 @@ useEffect(() => {
         <Route element={<AppLayout />}>
           <Route path="/" element={<MainPage />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/other_profile" element={<Other_profile />} />
           <Route path="/profile/:userId" element={<Profile />} />
           <Route path="/profile/edit" element={<EditProfile />} />
           <Route path="/findgymbuddy" element={<FindGymBuddy />} />
