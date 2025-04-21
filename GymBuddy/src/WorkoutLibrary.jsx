@@ -105,6 +105,20 @@ function WorkoutLibrary() {
 
   return (
     <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
+      <button
+        onClick = {() => navigate("/workout_library/custom-workout")}
+        style = {{
+          padding: "10px 20px",
+          marginBottom: "20px",
+          backgroundColor: "#4CAF50",
+          color: "white",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+        }}
+      >
+        My Custom Workouts
+      </button>
       <div style={{ marginBottom: "40px " }}>
         <h2> Workout Splits</h2>
 

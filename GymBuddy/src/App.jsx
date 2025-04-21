@@ -14,8 +14,10 @@ import WorkoutLibrary from "./WorkoutLibrary";
 import Stats from "./Stats";
 import Messages from "./Messages";
 import Schedule from "./Schedule";
-import "./App.css";
+import CustomWorkouts from "./CustomWorkout";
+import AddWorkout from "./AddWorkout";
 import Other_profile from "./Other_profile";
+import "./App.css";
 
 const App = () => {
 // Initialize a piece of state to store the authenticated user
@@ -51,6 +53,8 @@ useEffect(() => {
           <Route path="/stats" element={<Stats />} />
           <Route path="/schedule" element={<Schedule />} />
           <Route path="/workout_library" element={<WorkoutLibrary />} />
+          <Route path="/workout_library/custom-workout" element={<CustomWorkouts />} />
+          <Route path="/workout_library/custom-workout/add-workout" element={<AddWorkout />} />
         </Route>
       </Routes>
     </Router>
