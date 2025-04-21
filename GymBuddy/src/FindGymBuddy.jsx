@@ -39,7 +39,7 @@ const FindGymBuddy = () => {
 
   // Google Maps API loading status
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: "AIzaSyDLdljkfHKd8Htb9s_JiXqjDLPWWiPWlZ0",
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
   });
 
   // Handle form submission to search for gyms

@@ -1,15 +1,18 @@
+require('dotenv').config();
 const functions = require("firebase-functions");
 const fetch = require("node-fetch");
 
 // Cloud Function to search for gym locations using Google Places API
 exports.getGymLocations = functions.https.onRequest(async (req, res) => {
   // Set CORS headers for preflight and regular requests
-  res.set("Access-Control-Allow-Origin", "*");
-  res.set("Access-Control-Allow-Methods", "POST");
-  res.set("Access-Control-Allow-Headers", "Content-Type");
+  res.set("Access-Control-Allow-Origin", "*"); // Allow requests from any origin
+  res.set("Access-Control-Allow-Methods", "POST, OPTIONS"); // Allow POST and OPTIONS methods
+  res.set("Access-Control-Allow-Headers", "Content-Type, Authorization"); // Allow Content-Type and Authorization headers
 
   // Handle CORS preflight request
-  if (req.method === "OPTIONS") return res.status(204).send("");
+  if (req.method === "OPTIONS") {
+    return res.status(204).send(); // Send an empty response for OPTIONS requests
+  }
 
   console.log("Received body:", req.body);
 
@@ -29,8 +32,8 @@ exports.getGymLocations = functions.https.onRequest(async (req, res) => {
 
     // Construct the search query for Google Places
     const query = `${gymName.trim()}, ${city.trim()}, ${state.trim()}`;
-    const apiKey = "AIzaSyDLdljkfHKd8Htb9s_JiXqjDLPWWiPWlZ0"; // Replace with env var in production
-    const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&key=${apiKey}`;
+    const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
+    const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&key=${googleMapsApiKey}`;
 
     console.log("Calling Google API with:", url);
     const response = await fetch(url);
@@ -69,5 +72,3 @@ exports.getGymLocations = functions.https.onRequest(async (req, res) => {
     });
   }
 });
-
-

@@ -16,7 +16,7 @@ import Messages from "./Messages";
 import Schedule from "./Schedule";
 import CustomWorkouts from "./CustomWorkout";
 import AddWorkout from "./AddWorkout";
-import Other_profile from "./Other_profile";
+
 import "./App.css";
 
 const App = () => {
@@ -44,7 +44,6 @@ useEffect(() => {
         <Route element={<AppLayout />}>
           <Route path="/" element={<MainPage />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/other_profile" element={<Other_profile />} />
           <Route path="/profile/:userId" element={<Profile />} />
           <Route path="/profile/edit" element={<EditProfile />} />
           <Route path="/findgymbuddy" element={<FindGymBuddy />} />
