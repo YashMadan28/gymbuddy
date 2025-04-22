@@ -4,16 +4,29 @@ import { fetchUserWorkouts, updateUserWorkouts } from './services/workout-api';
 import "./animations.css";
 
 function CustomWorkouts() {
-  const [workouts, setWorkouts] = useState({
-    splits: [],
-    muscleGroups: []
-  });
+  const [workouts, setWorkouts] = useState({ exercises: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeSplit, setActiveSplit] = useState(null);
-  const [activeDay, setActiveDay] = useState(null);
-  const [activeMuscle, setActiveMuscle] = useState(null);
+  const [selectedFocus, setSelectedFocus] = useState('all');
+  const [expandedCards, setExpandedCards] = useState({});
   const navigate = useNavigate();
+
+  const toggleCard = (index) => {
+    setExpandedCards(prev => ({
+      ...prev,
+      [index]: !prev[index]
+    }));
+  };
+
+  const focusCategories = [
+    'all',
+    'chest',
+    'back',
+    'legs',
+    'arms',
+    'shoulders',
+    'core'
+  ];
 
   useEffect(() => {
     const loadWorkouts = async () => {
@@ -21,19 +34,20 @@ function CustomWorkouts() {
         setLoading(true);
         const data = await fetchUserWorkouts();
         // If no workouts exist yet, initialize with empty arrays
-        setWorkouts({
-          splits: data?.splits || [],
-          muscleGroups: data?.muscleGroups || []
-        });
+        setWorkouts( data || { exercises: [] });
       } catch (error) {
         console.error('Failed to load workouts:', error);
-        setDefaultResultOrder(error.message);
+        setError(error.message);
       } finally {
         setLoading(false);
       }
     };
     loadWorkouts();
   }, []);
+
+  const filteredExercises = workouts.exercises.filter(exercise => 
+    selectedFocus === 'all' || exercise.focus.toLowerCase() === selectedFocus
+  );
 
   if (loading) {
     return <div>Loading workouts...</div>;
@@ -44,14 +58,28 @@ function CustomWorkouts() {
   }
 
   return (
-    <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
+    <div style ={{ 
+      height: "100vh", 
+      display: "flex", 
+      flexDirection: "column", 
+      overflow: "hidden",
+      paddingTop: "15px"
+    }}>
+      <div style={{ 
+        padding: "20px",
+        borderBottom: "1px solid #ddd",
+        position: "sticky",
+        top: 0,
+        zIndex: 10
+      }}>
+    <div style={{ maxWidth: "800px", margin: "0 auto"}}>
       <h1>My Custom Workouts</h1>
-      
+
       <button
         onClick={() => navigate('/workout_library/custom-workout/add-workout')}
         style={{
           padding: '10px 20px',
-          marginBottom: '20px',
+          marginBottom: '15px',
           backgroundColor: '#4CAF50',
           color: 'white',
           border: 'none',
@@ -59,117 +87,111 @@ function CustomWorkouts() {
           cursor: 'pointer'
         }}
       >
-        Add New Workout
+        Add New Exercise
       </button>
+      
+      <div className = "tabs">
+        <div className = "container">
+        {focusCategories.map((focus, index) => (
+          <div key = {focus}>
+            <input
+              type = "radio"
+              name = "focus"
+              id = {`radio-${index + 1}`}
+              value = {focus}
+              checked = {selectedFocus == focus}
+              onChange = {(e) => setSelectedFocus(e.target.value)}
+            />
+          <label
+            className = "tab" 
+            htmlFor={`radio-${index + 1}`}
+          >
+              {focus.charAt(0).toUpperCase() + focus.slice(1)}
+          </label>
+        </div>
+        ))}
+        </div>
+      </div>
+      </div>
+      </div>
 
+      <div style = {{
+        flex: 1,
+        overflowY: "auto",
+        padding: "20px",
+      }}>
+      <div style = {{
+        maxWidth: "800px",
+        margin: "0 auto",
+        paddingBottom: "100px",
+      }}>
       <div style={{ marginBottom: "40px " }}>
-        <h2>Workout Splits</h2>
+        <h2>My Exercises</h2>
         
-        {workouts.splits.length === 0 ? (
-          <p>No custom splits added yet. Click "Add New Workout" to create one!</p>
+        {filteredExercises.length === 0 ? (
+          <p>
+            {selectedFocus === 'all'
+            ? 'No custom exercises added yet. Click "Add New Exercise" to create one!'
+            : `No exercises found for ${selectedFocus} focus.`}
+          </p>
         ) : (
-          <div className="frutiger" style={{
-            display: "flex",
-            gap: "10px",
-            flexWrap: "wrap",
-            marginBottom: "20px",
-            justifyContent: "center",
-          }}>
-            {workouts.splits.map((split, splitIndex) => (
-              <button
-                key={splitIndex}
-                onClick={() => {
-                  setActiveSplit(splitIndex);
-                  setActiveDay(null);
-                }}
-              >
-                <div className="inner" style={{ gap: "20px" }}>
-                  <div className="top-white"></div>
-                  <span className="text">{split.name}</span>
-                </div>
-              </button>
-            ))}
-          </div>
-        )}
-
-        {activeSplit !== null && (
-          <div className="purpleGlow" style={{
-            display: "flex",
-            gap: "10px",
-            flexWrap: "wrap",
-            marginBottom: "20px",
-            justifyContent: "center",
-          }}>
-            {workouts.splits[activeSplit].days.map((day, dayIndex) => (
-              <button key={dayIndex} onClick={() => setActiveDay(dayIndex)}>
-                {day.dayName}
-              </button>
-            ))}
-          </div>
-        )}
-
-        {activeSplit !== null && activeDay !== null && (
           <div>
-            <h3>{workouts.splits[activeSplit].days[activeDay].dayName}</h3>
-            <p>
-              <strong>Focus:</strong>{" "}
-              {workouts.splits[activeSplit].days[activeDay].focus}
-            </p>
-            <ul>
-              {workouts.splits[activeSplit].days[activeDay].exercises.map(
-                (exercise, i) => (
-                  <li key={i}>{exercise.name} - {exercise.sets} sets x {exercise.reps} reps</li>
-                )
-              )}
-            </ul>
-          </div>
-        )}
-      </div>
-
-      <div>
-        <h2>Muscle Group Focus</h2>
-        {workouts.muscleGroups.length === 0 ? (
-          <p>No custom muscle groups added yet. Click "Add New Workout" to create one!</p>
-        ) : (
-          <div style={{
-            display: "flex",
-            gap: "10px",
-            flexWrap: "wrap",
-            marginBottom: "20px",
-            justifyContent: "center",
-          }}>
-            {workouts.muscleGroups.map((group, index) => (
-              <button
+            {filteredExercises.map((exercise, index) => (
+              <div 
                 key={index}
+                className="exercise-card"
                 style={{
-                  padding: "10px 15px",
-                  background: activeMuscle === index ? "#4CAF50" : "#d0d0d0",
-                  border: "none",
-                  borderRadius: "5px",
-                  cursor: "pointer",
+                  border: '1px solid #ddd',
+                  borderRadius: '5px',
+                  padding: '15px',
+                  marginBottom: '10px',
+                  backgroundColor: 'black',
+                  boxShadow: '2 2px 4px rgba(0, 0, 0, 0.1)',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
                 }}
-                onClick={() => setActiveMuscle(index)}
+                onClick={() => toggleCard(index)}
               >
-                {group.groupName}
-              </button>
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}>
+                  <h3 style={{ margin: 0 }}>{exercise.name}</h3>
+                  <span style={{ 
+                    transform: expandedCards[index] ? 'rotate(180deg)' : 'rotate(0deg)',
+                    transition: 'transform 0.3s ease',
+                    }}>
+                      ▼
+                    </span>
+                </div>
+
+                {expandedCards[index] && (
+                  <div style={{
+                    marginTop: '10px',
+                    padding: '10px',
+                    borderTop: '1px solid #ddd',
+                    transition: 'all 0.3s ease',
+                  }}>
+                    <p><strong>Focus:</strong> {exercise.focus}</p>
+                    <p style = {{ margin: 0 }}><strong>Sets:</strong> {exercise.sets} | <strong>Reps:</strong> {exercise.reps}</p>
+                  </div>
+                )}
+              </div>
             ))}
           </div>
         )}
-
-        {activeMuscle !== null && workouts.muscleGroups[activeMuscle] && (
-          <div>
-            <h3>{workouts.muscleGroups[activeMuscle].groupName}</h3>
-            <ul>
-              {workouts.muscleGroups[activeMuscle].exercises.map(
-                (exercise, i) => (
-                  <li key={i}>{exercise.name} - {exercise.sets} sets x {exercise.reps} reps</li>
-                )
-              )}
-            </ul>
-          </div>
-        )}
       </div>
-
+      </div>
+               
+      <div style={{ 
+      padding: "20px",
+      position: "fixed",
+      bottom: 0,
+      left: 0,
+      right: 0,
+      zIndex: 10
+      }}>
       <button
         onClick={() => navigate("/workout_library")}
         style={{
@@ -183,6 +205,8 @@ function CustomWorkouts() {
       >
         Back
       </button>
+    </div>
+    </div>
     </div>
   );
 }

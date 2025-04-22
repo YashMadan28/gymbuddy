@@ -19,15 +19,27 @@ export const fetchUserWorkouts = async () => {
           throw new Error('Failed to fetch workouts');
         }
         const data = await response.json();
-        return data || { splits: [], muscleGroups: [] };
+        return data || { exercises: [] };
       } catch (error) {
         console.error('Error fetching workouts:', error);
-        return { splits: [], muscleGroups: [] }; // Return empty default state
+        return { exercises: [] }; // Return empty default state
       }
 };
 
 export const updateUserWorkouts = async (workoutData) => {
   try {
+    if (!auth.currentUser) {
+      throw new Error('User not authenticated');
+    }
+
+    const existingWorkouts = await fetchUserWorkouts();
+    const updatedWorkouts = {
+      exercises: [
+        ...(existingWorkouts.exercises || []),
+        ...workoutData.exercises
+      ]
+    };
+    
     const token = await auth.currentUser.getIdToken();
     const response = await fetch(`${API_URL}/workouts/${auth.currentUser.uid}`, {
       method: 'PUT',
@@ -35,7 +47,7 @@ export const updateUserWorkouts = async (workoutData) => {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
       },
-      body: JSON.stringify(workoutData)
+      body: JSON.stringify(updatedWorkouts)
     });
     
     if (!response.ok) {

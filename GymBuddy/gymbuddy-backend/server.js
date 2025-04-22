@@ -431,7 +431,7 @@ app.get('/api/workouts/:userId', verifyToken, async (req, res) => {
       return res.status(403).json({ message: 'Unauthorized access' });
     }
     const workouts = await Workout.findOne({ userId });
-    res.json(workouts || { splits: [], muscleGroups: [] });
+    res.json(workouts || { exercises: []});
   } catch (error) {
     console.error('Error fetching workouts:', error);
     res.status(500).json({ message: error.message });
@@ -445,14 +445,13 @@ app.put('/api/workouts/:userId', verifyToken, async (req, res) => {
     if (userId !== req.user.uid) {
       return res.status(403).json({ message: 'Unauthorized access' });
     }
-    const { splits, muscleGroups } = req.body;
+    const { exercises } = req.body;
 
     const workout = await Workout.findOneAndUpdate(
       { userId },
       { 
         userId,
-        splits,
-        muscleGroups
+        exercises
       },
       { new: true, upsert: true }
     );

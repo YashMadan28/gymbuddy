@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { auth } from "./firebase";
+import { onAuthStateChanged } from "firebase/auth";
 import "./animations.css";
 
 <Link to="/workout_library">
@@ -100,25 +102,34 @@ function WorkoutLibrary() {
   const [activeSplit, setActiveSplit] = useState(null);
   const [activeDay, setActiveDay] = useState(null);
   const [activeMuscle, setActiveMuscle] = useState(null);
-
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsLoggedIn(!!user);
+    });
+    return () => unsubscribe();
+  }, []);
 
   return (
     <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
-      <button
-        onClick = {() => navigate("/workout_library/custom-workout")}
-        style = {{
-          padding: "10px 20px",
-          marginBottom: "20px",
-          backgroundColor: "#4CAF50",
-          color: "white",
-          border: "none",
-          borderRadius: "5px",
-          cursor: "pointer",
-        }}
-      >
-        My Custom Workouts
-      </button>
+      {isLoggedIn && (
+        <button
+          onClick = {() => navigate("/workout_library/custom-workout")}
+          style = {{
+            padding: "10px 20px",
+            marginBottom: "20px",
+            backgroundColor: "#4CAF50",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          My Custom Workouts
+        </button>
+      )}
       <div style={{ marginBottom: "40px " }}>
         <h2> Workout Splits</h2>
 
@@ -135,7 +146,6 @@ function WorkoutLibrary() {
           {workoutData.splits.map((split, splitIndex) => (
             <button
               key={splitIndex}
-              /*className = "fruitger"*/
               onClick={() => {
                 setActiveSplit(splitIndex);
                 setActiveDay(null);
