@@ -14,6 +14,9 @@ import WorkoutLibrary from "./WorkoutLibrary";
 import Stats from "./Stats";
 import Messages from "./Messages";
 import Schedule from "./Schedule";
+import CustomWorkouts from "./CustomWorkout";
+import AddWorkout from "./AddWorkout";
+
 import "./App.css";
 
 const App = () => {
@@ -49,6 +52,8 @@ useEffect(() => {
           <Route path="/stats" element={<Stats />} />
           <Route path="/schedule" element={<Schedule />} />
           <Route path="/workout_library" element={<WorkoutLibrary />} />
+          <Route path="/workout_library/custom-workout" element={<CustomWorkouts />} />
+          <Route path="/workout_library/custom-workout/add-workout" element={<AddWorkout />} />
         </Route>
       </Routes>
     </Router>

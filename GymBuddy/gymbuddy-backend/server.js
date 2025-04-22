@@ -4,12 +4,14 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const http = require('http');
 const multer = require('multer');
-const User = require('./models/User');
 const { verifyToken } = require('./firebase/firebaseAdmin');
 const Messages = require('./models/Messages');
 const { Server } = require('socket.io');
 const { ref, uploadBytes, getDownloadURL } = require('firebase/storage');
 const storage = require('./firebase/firebaseAdmin');
+const User = require('./models/User'); // Import the User model
+const Workout = require('./models/Workout');
+require('dotenv').config();
 
 
 const app = express();
@@ -421,6 +423,45 @@ app.get('/api/users/:userId/chats', verifyToken, async (req, res) => {
 });
 
 
+// Get user's workouts
+app.get('/api/workouts/:userId', verifyToken, async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    if (userId !== req.user.uid) {
+      return res.status(403).json({ message: 'Unauthorized access' });
+    }
+    const workouts = await Workout.findOne({ userId });
+    res.json(workouts || { exercises: []});
+  } catch (error) {
+    console.error('Error fetching workouts:', error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Create/Update workout
+app.put('/api/workouts/:userId', verifyToken, async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    if (userId !== req.user.uid) {
+      return res.status(403).json({ message: 'Unauthorized access' });
+    }
+    const { exercises } = req.body;
+
+    const workout = await Workout.findOneAndUpdate(
+      { userId },
+      { 
+        userId,
+        exercises
+      },
+      { new: true, upsert: true }
+    );
+    
+    res.json(workout);
+  } catch (error) {
+    console.error('Error updating workouts:', error);
+    res.status(500).json({ message: error.message });
+  }
+});
 
 // Start the server
 app.listen(port, () => {
