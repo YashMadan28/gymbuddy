@@ -1,20 +1,20 @@
-const admin = require('firebase-admin');
-const path = require('path');
-const serviceAccount = require(path.join(__dirname, '../AKY/gymbuddy-d7838-firebase-admins.json')); 
+import { initializeApp, credential as _credential, storage, auth } from 'firebase-admin';
+import { join } from 'path';
+const serviceAccount = require(join(__dirname, '../AKY/gymbuddy-d7838-firebase-admins.json')); 
 
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+initializeApp({
+    credential: _credential.cert(serviceAccount),
     storageBucket: "gymbuddy-d7838.firebasestorage.app"
 });
 
-const bucket = admin.storage().bucket();
+const bucket = storage().bucket();
 
 const verifyToken = async (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) return res.status(401).json({ message: 'Unauthorized' });
 
   try {
-    const decodedToken = await admin.auth().verifyIdToken(token);
+    const decodedToken = await auth().verifyIdToken(token);
     req.user = decodedToken;
     next();
   } catch (error) {
@@ -22,4 +22,4 @@ const verifyToken = async (req, res, next) => {
   }
 };
 
-module.exports = { verifyToken };
+export default { verifyToken };
