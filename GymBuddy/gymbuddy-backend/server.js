@@ -11,7 +11,7 @@ const { ref, uploadBytes, getDownloadURL } = require('firebase/storage');
 const storage = require('./firebase/firebaseAdmin');
 const User = require('./models/User'); // Import the User model
 const Workout = require('./models/Workout');
-require('dotenv').config();
+console.log('MONGO_URI:', process.env.MONGO_URI);
 
 
 const app = express();
