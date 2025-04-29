@@ -4,11 +4,11 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const http = require('http');
 const multer = require('multer');
-const { verifyToken } = require('./firebase/firebaseAdmin').default;
+const { verifyToken } = require('./firebase/firebaseAdmin');
 const Messages = require('./models/Messages');
 const { Server } = require('socket.io');
 const { ref, uploadBytes, getDownloadURL } = require('firebase/storage');
-const storage = require('./firebase/firebaseAdmin').default;
+const storage = require('./firebase/firebaseAdmin');
 const User = require('./models/User'); // Import the User model
 const Workout = require('./models/Workout');
 console.log('MONGO_URI:', process.env.MONGO_URI);
