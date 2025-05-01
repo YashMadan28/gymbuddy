@@ -1,283 +1,311 @@
+/* Main chat container */
 .chat {
+  display: flex;
+  flex-direction: column;
   flex: 2.8;
   min-height: 0;
-  overflow-y: auto;
   border-left: 1px solid #dddddd35;
   border-right: 1px solid #dddddd35;
+}
 
-  .top {
-    margin-top: 20px;
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid #dddddd35;
+/* Top user info bar */
+.chat .top {
+  margin-top: 20px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #dddddd35;
+}
 
-    .user {
-      display: flex;
-      align-items: center;
-      gap: 20px;
+/* User avatar and status in top bar */
+.chat .top .user {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
 
-      .avatar-wrapper {
-        position: relative;
+.chat .top .user .avatar-wrapper {
+  position: relative;
+}
 
-        img {
-          width: 70px;
-          height: 70px;
-          border-radius: 50%;
-          object-fit: cover;
-          border: 5px solid black;
-        }
+.chat .top .user .avatar-wrapper img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid black;
+}
 
-        .online-marker {
-          position: absolute;
-          bottom: 9px;
-          right: 6px;
-          width: 12px;
-          height: 12px;
-          background-color: #4caf50;
-          border-radius: 50%;
-          border: 3px solid black;
-        }
-      }
+/* Green online dot indicator */
+.chat .top .user .avatar-wrapper .online-marker {
+  position: absolute;
+  bottom: 9px;
+  right: 6px;
+  width: 12px;
+  height: 12px;
+  background-color: #4caf50;
+  border-radius: 50%;
+  border: 2px solid black;
+}
 
-      .texts {
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-        justify-content: center;
-        align-items: flex-start;
+/* User name and status text */
+.chat .top .user .texts {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  justify-content: center;
+  align-items: flex-start;
+}
 
-        span {
-          font-size: 18px;
-          font-weight: bold;
-        }
+.chat .top .user .texts span {
+  font-size: 18px;
+  font-weight: bold;
+}
 
-        p {
-          font-size: 14px;
-          font-weight: 300;
-          margin: 0;
-          color: white;
-        }
-      }
-    }
-  }
+.chat .top .user .texts p {
+  font-size: 14px;
+  font-weight: 300;
+  margin: 0;
+  color: white;
+}
 
-  .middle {
-    padding: 20px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+/* Scrollable message area */
+.chat .middle {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
 
-    .message {
-      max-width: 50%;
-      display: flex;
-      gap: 20px;
+/* Individual message layout */
+.chat .middle .message {
+  max-width: 50%;
+  display: flex;
+  gap: 20px;
+}
 
-      &.own {
-        align-self: flex-end;
+/* Align own messages to the right */
+.chat .middle .message.own {
+  align-self: flex-end;
+}
 
-        .texts {
-          p {
-            background-color: #5183fe;
-          }
-        }
-      }
+/* Background color for sent messages */
+.chat .middle .message.own .texts p {
+  background-color: #5183fe;
+}
 
-      img {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 3px solid black;
-      }
-      .texts {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
+/* Message sender avatar */
+.chat .middle .message img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid black;
+}
 
-        img {
-          width: 100%;
-          height: 300px;
-          border-radius: 10px;
-          object-fit: cover;
-          border: 0px;
-        }
+/* Message text/image container */
+.chat .middle .message .texts {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
 
-        p {
-          padding: 20px;
-          background-color: rgba(17, 25, 40, 0.3);
-          border-radius: 10px;
-        }
+.chat .middle .message .texts img {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+  border-radius: 10px;
+  object-fit: contain;
+}
 
-        span {
-          font-size: 13px;
-        }
-      }
-    }
-  }
+.chat .middle .message .texts p {
+  padding: 20px;
+  background-color: rgba(17, 25, 40, 0.3);
+  border-radius: 10px;
+}
 
-  .bottom {
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-top: 1px solid #dddddd35;
-    gap: 20px;
-    margin-top: auto;
+.chat .middle .message .texts span {
+  font-size: 13px;
+}
 
-    .icons {
-      display: flex;
-      gap: 20px;
-    }
+/* Bottom input section */
+.chat .bottom {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid #dddddd35;
+  gap: 20px;
+  margin-top: auto;
+}
 
-    img {
-      width: 30px;
-      height: 30px;
-      cursor: pointer;
-    }
+/* Emoji and file upload icons */
+.chat .bottom .icons {
+  display: flex;
+  gap: 20px;
+}
 
-    .emoji {
-      position: relative;
+.chat .bottom img {
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+}
 
-      .picker {
-        position: absolute;
-        bottom: 50px;
-        left: 0;
-      }
-    }
+/* Emoji picker container */
+.chat .bottom .emoji {
+  position: relative;
+}
 
-/*Adapted from: https://uiverse.io/mpody11/big-goose-56*/
-    .messageBox {
-      width: 100%;
-      height: 44px;
-      display: flex;
-      align-items: center;
-      background-color: rgba(30, 30, 30, 0.85);
-      padding: 0;
-      border-radius: 10px;
-      border: 1px solid rgba(63, 63, 63, 0.7);
-      transition: all 0.2s;
-      position: relative;
-      backdrop-filter: blur(3px);
-    }
-    
-    .messageBox:focus-within {
-      outline: 1px solid rgba(255, 255, 255, 0.5);
-      outline-offset: -1px;
-      background-color: rgba(30, 30, 30, 0.9);
-    }
-    
-    .fileUploadWrapper {
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0 12px;
-      border-right: 1px solid rgba(63, 63, 63, 0.5);
-      background-color: transparent;
-    }
-    
-    #file {
-      display: none;
-    }
-    
-    .fileUploadWrapper label {
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      height: 100%;
-      width: 100%;
-      background-color: transparent;
-    }
-    
-    .fileUploadWrapper label svg {
-      height: 19px;
-    }
-    
-    #messageInput {
-      flex: 1;
-      height: 100%;
-      background-color: rgba(255, 255, 255, 0.08);
-      outline: none;
-      border: none;
-      padding: 0 12px;
-      color: #f5f5f5;
-      font-size: 14px;
-    }
-    
-    #messageInput:focus {
-      background-color: rgba(255, 255, 255, 0.12);
-    }
-    
-    #sendButton {
-      height: 100%;
-      background-color: transparent;
-      border: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      padding: 0 12px;
-      border-left: 1px solid rgba(63, 63, 63, 0.5);
-    }
-    
-    #sendButton svg {
-      height: 19px;
-    }
-    
-    #messageInput:not(:placeholder-shown) ~ #sendButton svg path {
-      fill: #3682f4;
-      stroke: white;
-    }
-    
-    #sendButton:hover svg path {
-      fill: #3682f4;
-      stroke: white;
-    }
-    
-    .fileUploadWrapper label svg path,
-    .fileUploadWrapper label svg circle,
-    #sendButton svg path {
-      transition: all 0.3s;
-    }
-    
-    .fileUploadWrapper label:hover svg path {
-      stroke: #fff;
-    }
-    
-    .fileUploadWrapper label:hover svg circle {
-      stroke: #fff;
-      fill: #3c3c3c;
-    }
-    
-    .fileUploadWrapper label:hover .tooltip {
-      display: block;
-      opacity: 1;
-    }
-    
-    .tooltip {
-      position: absolute;
-      top: -40px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: none;
-      opacity: 0;
-      color: white;
-      font-size: 10px;
-      background-color: rgba(0, 0, 0, 0.9);
-      padding: 6px 10px;
-      border: 1px solid #3c3c3c;
-      border-radius: 5px;
-      box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.596);
-      transition: all 0.3s;
-      white-space: nowrap;
-      backdrop-filter: blur(2px);
-    }
+.chat .bottom .emoji .picker {
+  position: absolute;
+  bottom: 50px;
+  left: 0;
+}
 
-    }
-  }
+/* Chat input container */
+.chat .bottom .messageBox {
+  width: 100%;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  background-color: rgba(30, 30, 30, 0.85);
+  padding: 0;
+  border-radius: 10px;
+  border: 1px solid rgba(63, 63, 63, 0.7);
+  transition: all 0.2s;
+  position: relative;
+  backdrop-filter: blur(3px);
+}
+
+/* Highlight on input focus */
+.chat .bottom .messageBox:focus-within {
+  outline: 1px solid rgba(255, 255, 255, 0.5);
+  outline-offset: -1px;
+  background-color: rgba(30, 30, 30, 0.9);
+}
+
+/* File upload area inside message box */
+.chat .bottom .fileUploadWrapper {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  border-right: 1px solid rgba(63, 63, 63, 0.5);
+  background-color: transparent;
+}
+
+/* Hide native file input */
+#file {
+  display: none;
+}
+
+/* Upload button container */
+.fileUploadWrapper label {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  background-color: transparent;
+}
+
+.fileUploadWrapper label svg {
+  height: 19px;
+}
+
+/* Message text input */
+#messageInput {
+  flex: 1;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.08);
+  outline: none;
+  border: none;
+  padding: 0 12px;
+  color: #f5f5f5;
+  font-size: 14px;
+}
+
+#messageInput:focus {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Send button styling */
+#sendButton {
+  height: 100%;
+  background-color: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0 12px;
+  border-left: 1px solid rgba(63, 63, 63, 0.5);
+}
+
+#sendButton svg {
+  height: 19px;
+}
+
+/* Highlight send icon when input has text */
+#messageInput:not(:placeholder-shown) ~ #sendButton svg path {
+  fill: #3682f4;
+  stroke: white;
+}
+
+/* Hover effect on send button */
+#sendButton:hover svg path {
+  fill: #3682f4;
+  stroke: white;
+}
+
+/* SVG transition styling for upload and send buttons */
+.fileUploadWrapper label svg path,
+.fileUploadWrapper label svg circle,
+#sendButton svg path {
+  transition: all 0.3s;
+}
+
+/* Hover effect for upload icon */
+.fileUploadWrapper label:hover svg path {
+  stroke: #fff;
+}
+
+.fileUploadWrapper label:hover svg circle {
+  stroke: #fff;
+  fill: #3c3c3c;
+}
+
+/* Tooltip for file upload button */
+.fileUploadWrapper label:hover .tooltip {
+  display: block;
+  opacity: 1;
+}
+
+/* Tooltip styling */
+.tooltip {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: none;
+  opacity: 0;
+  color: white;
+  font-size: 10px;
+  background-color: rgba(0, 0, 0, 0.9);
+  padding: 6px 10px;
+  border: 1px solid #3c3c3c;
+  border-radius: 5px;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.596);
+  transition: all 0.3s;
+  white-space: nowrap;
+  backdrop-filter: blur(2px);
+}
+
+   

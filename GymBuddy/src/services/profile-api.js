@@ -1,21 +1,25 @@
 import { auth } from '../firebase';
 
-// Updates a user's profile using their Firebase UID and new profile data
+/**
+ * Updates the user's profile data in the backend using their Firebase UID.
+ * Ensures gym is formatted as an object with a `display` key.
+ */
 export const updateUserProfile = async (firebaseUid, profileData) => {
   try {
     const user = auth.currentUser;
     if (!user) throw new Error('No authenticated user');
 
-    // Normalize gym data format to support legacy string format
+    // Format gym field correctly for backend schema
     const processedData = {
       ...profileData,
       gym: typeof profileData.gym === 'string' 
-        ? { display: profileData.gym, place_id: `legacy_${firebaseUid}` }
+        ? { display: profileData.gym }
         : profileData.gym
-    };
+    };    
 
     const token = await user.getIdToken();
 
+    // Send PUT request to update user profile
     const response = await fetch(`http://localhost:5000/api/users/${firebaseUid}`, {
       method: 'PUT',
       headers: {
@@ -37,13 +41,17 @@ export const updateUserProfile = async (firebaseUid, profileData) => {
   }
 };
 
-// Fetches the currently logged-in user's profile from the backend
+/**
+ * Fetches the currently authenticated user's profile from the backend.
+ * If the profile doesn't exist, returns a default empty profile.
+ */
 export const fetchUserProfile = async () => {
   try {
     const user = auth.currentUser;
     if (!user) throw new Error('No authenticated user');
 
     const token = await user.getIdToken();
+
     const response = await fetch(
       `http://localhost:5000/api/users/${user.uid}`,
       {
@@ -51,8 +59,8 @@ export const fetchUserProfile = async () => {
       }
     );
 
-    // If no profile exists yet, return a default empty profile
     if (!response.ok) {
+      // Return fallback profile if user not found
       if (response.status === 404) {
         return {
           firebaseUid: user.uid,
@@ -65,13 +73,14 @@ export const fetchUserProfile = async () => {
           profilePicture: null
         };
       }
+
       const errorData = await response.json();
       throw new Error(errorData.message || 'Failed to fetch profile');
     }
 
     const data = await response.json();
 
-    // Convert gym object to string for backward compatibility
+    // Flatten gym.display if gym is stored as object
     if (data.gym && typeof data.gym === 'object') {
       data.gym = data.gym.display || '';
     }
@@ -83,13 +92,17 @@ export const fetchUserProfile = async () => {
   }
 };
 
-// Fetches a public version of another user's profile by ID
+/**
+ * Fetches the public-facing profile of another user by MongoDB user ID.
+ * Only non-sensitive fields are returned.
+ */
 export const fetchOtherUserProfile = async (userId) => {
   try {
     const user = auth.currentUser;
     if (!user) throw new Error('No authenticated user');
 
     const token = await user.getIdToken();
+
     const response = await fetch(
       `http://localhost:5000/api/users/${userId}/public`,
       {
@@ -104,12 +117,12 @@ export const fetchOtherUserProfile = async (userId) => {
 
     const data = await response.json();
 
-    // Only return public-facing fields
+    // Return only public data
     return {
       name: data.name || '',
       age: data.age || null,
       gender: data.gender || null,
-      gym: data.gym || '',
+      gym: data.gym?.display || '',
       about: data.about || '',
       profilePicture: data.profilePicture || null
     };
@@ -119,6 +132,10 @@ export const fetchOtherUserProfile = async (userId) => {
   }
 };
 
+/**
+ * Creates a new user profile document in the backend.
+ * Sends name, UID, and email to backend via POST.
+ */
 export const createUserProfile = async (name) => {
   try {
     const user = auth.currentUser;
@@ -134,7 +151,6 @@ export const createUserProfile = async (name) => {
         firebaseUid: user.uid,
         email: user.email,
         name: name,
-        profilePicture: "https://firebasestorage...default_image.jpg"
       })
     });
 
@@ -149,22 +165,41 @@ export const createUserProfile = async (name) => {
   }
 };
 
-// Fetches a list of users who go to the same gym based on place_id
-export const fetchUsersByGym = async ({ place_id }) => {
+/**
+ * Fetches a list of users who go to a gym matching the given display string.
+ */
+export const fetchUsersByGym = async ({ gym_display }) => {
   try {
     const user = auth.currentUser;
-    if (!user || !place_id) return [];
+    if (!user || !gym_display) {
+      console.warn("Missing user or gym_display");
+      return [];
+    }
 
     const token = await user.getIdToken();
-    const response = await fetch(
-      `http://localhost:5000/api/users/by-gym?place_id=${encodeURIComponent(place_id)}`,
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
 
-    if (!response.ok) return []; // Fallback if API fails
-    return await response.json();
+    // Construct full URL with query param
+    const url = `http://localhost:5000/api/users/by-gym?gym_display=${encodeURIComponent(gym_display)}`;
+
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.message || 'Failed to fetch users');
+    }
+
+    const data = await response.json();
+    return data;
   } catch (error) {
-    console.error('Fetch error:', error);
-    return [];
+    console.error('fetchUsersByGym error:', error);
+    return { success: false, data: [], message: error.message };
   }
 };
+
+
+
+

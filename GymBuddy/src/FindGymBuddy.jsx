@@ -4,7 +4,7 @@ import { TextField, Button, Box, MenuItem, Typography, CircularProgress } from '
 import { GoogleMap, Marker, useLoadScript } from '@react-google-maps/api';
 import './FindGymBuddy.css';
 
-// List of US states for dropdown
+// List of US states for dropdown selection
 const states = [
   'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia',
   'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts',
@@ -15,59 +15,52 @@ const states = [
 ];
 
 const FindGymBuddy = () => {
-  // Form state management
-  const [formData, setFormData] = useState({
-    gymName: '',
-    city: '',
-    state: '',
-  });
-  
-  // Form validation errors
-  const [errors, setErrors] = useState({
-    gymName: false,
-    city: false,
-    state: false,
-  });
+  // Form input and validation state
+  const [formData, setFormData] = useState({ gymName: '', city: '', state: '' });
+  const [errors, setErrors] = useState({ gymName: false, city: false, state: false });
 
-  // Location search results
+  // State for fetched locations and map interaction
   const [locations, setLocations] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false); 
 
+  // Loading and submission state
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  // Navigation
   const navigate = useNavigate();
 
-  // Google Maps API loading status
+  // Load Google Maps script using API key
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
   });
 
-  // Handle form submission to search for gyms
+  // Handle form submission to fetch gym locations
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    // Prepare payload with trimmed values
+
+    // Prepare and validate payload
     const payload = {
       gymName: formData.gymName.trim(),
       city: formData.city.trim(),
       state: formData.state.trim()
     };
-  
-    // Validate form fields
+
     const newErrors = {
       gymName: !payload.gymName,
       city: !payload.city,
       state: !payload.state
     };
+
     setErrors(newErrors);
     if (Object.values(newErrors).some(Boolean)) return;
-  
+
     try {
       setLoading(true);
       setLocations([]);
       setSelectedLocation(null);
-      
-      // Call backend API to search for gym locations
+
+      // Send request to Firebase cloud function
       const response = await fetch(
         "https://us-central1-gymbuddy-d7838.cloudfunctions.net/getGymLocations",
         {
@@ -76,17 +69,16 @@ const FindGymBuddy = () => {
           body: JSON.stringify(payload)
         }
       );
-  
+
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Request failed");
-      
-      // Process successful response
+
+      // Map results to simplified format
       if (data.status === "OK" && data.results?.length) {
         const foundLocations = data.results.map(result => ({
           position: result.geometry.location,
           address: result.formatted_address,
-          name: result.name,
-          place_id: result.place_id
+          name: result.name
         }));
         setLocations(foundLocations);
       } else {
@@ -101,34 +93,30 @@ const FindGymBuddy = () => {
     }
   };
 
-  // Handle marker selection on map
+  // Handle clicking on a gym marker
   const handleMarkerClick = (location) => {
-    setSelectedLocation({
-      ...location,
-      place_id: location.place_id || `manual_${location.name}_${location.address}`
-    });
+    setSelectedLocation(location);
   };
 
-  // Confirm location selection and navigate to matches
+  // Navigate to Matches page with selected location
   const handleConfirm = () => {
     if (!selectedLocation) return;
-    
-    navigate('/Matches', { 
+
+    navigate('/Matches', {
       state: {
         location: {
-          fullGymString: `${selectedLocation.name}, ${selectedLocation.address}`,
-          place_id: selectedLocation.place_id
+          fullGymString: `${selectedLocation.name}, ${selectedLocation.address}`
         }
       }
     });
   };
 
-  // Handle Google Maps API loading errors
+  // Handle Google Maps load failure
   if (loadError) {
-    return <Typography variant="h6" color="error">Error loading Google Maps API. Please try again later.</Typography>;
+    return <Typography variant="h6" color="error">Error loading Google Maps API.</Typography>;
   }
 
-  // Show loading state while Google Maps API loads
+  // Display loading indicator while Google Maps script loads
   if (!isLoaded) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
@@ -137,38 +125,38 @@ const FindGymBuddy = () => {
     );
   }
 
-  // Set map center based on results or default to US center
+  // Determine map center: first result or default US center
   const mapCenter = locations.length > 0 ? locations[0].position : { lat: 39.8283, lng: -98.5795 };
 
   return (
     <>
       {/* Background image */}
       <div className="backdrop-image" />
-      
-      {/* Main content container */}
+
+      {/* Scrollable container for form and results */}
       <div className="scroll-container">
         <Box
-          className="glass-effect" 
-          sx={{ 
+          className="glass-effect"
+          sx={{
             padding: '20px',
             maxWidth: '650px',
-            margin: 'auto', 
-            display: 'flex', 
-            flexDirection: 'column', 
+            margin: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
             gap: 2,
             marginTop: '50px',
             overflow: 'hidden',
             color: 'white'
           }}
         >
-          {/* Page header */}
+          {/* Page heading */}
           <Typography variant="h4" gutterBottom sx={{ color: 'white' }}>
             Find Gym Buddy
           </Typography>
-          
-          {/* Search form */}
+
+          {/* Form for gym input */}
           <form onSubmit={handleSubmit}>
-            {/* Gym name input */}
+            {/* Gym name field */}
             <TextField
               label="Gym Name"
               name="gymName"
@@ -182,17 +170,17 @@ const FindGymBuddy = () => {
                 input: { color: 'white' },
                 label: { color: 'rgba(255,255,255,0.7)', '&.Mui-focused': { color: 'white' } },
                 '& .MuiOutlinedInput-root': {
-                  '& fieldset': { borderColor: 'rgba(255,255,255,0.3)'},
+                  '& fieldset': { borderColor: 'rgba(255,255,255,0.3)' },
                   '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.5)' },
-                  '&.Mui-focused fieldset': { borderColor: 'white'}
+                  '&.Mui-focused fieldset': { borderColor: 'white' }
                 },
                 '& .MuiFormHelperText-root': {
                   color: 'rgba(255,255,255,0.7)'
                 }
               }}
             />
-            
-            {/* City input */}
+
+            {/* City field */}
             <TextField
               label="City"
               name="city"
@@ -206,17 +194,17 @@ const FindGymBuddy = () => {
                 input: { color: 'white' },
                 label: { color: 'rgba(255,255,255,0.7)', '&.Mui-focused': { color: 'white' } },
                 '& .MuiOutlinedInput-root': {
-                  '& fieldset': { borderColor: 'rgba(255,255,255,0.3)'},
+                  '& fieldset': { borderColor: 'rgba(255,255,255,0.3)' },
                   '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.5)' },
-                  '&.Mui-focused fieldset': { borderColor: 'white'}
+                  '&.Mui-focused fieldset': { borderColor: 'white' }
                 },
                 '& .MuiFormHelperText-root': {
                   color: 'rgba(255,255,255,0.7)'
                 }
               }}
             />
-            
-            {/* State dropdown */}
+
+            {/* State select field */}
             <TextField
               label="State"
               name="state"
@@ -232,9 +220,9 @@ const FindGymBuddy = () => {
                 '& .MuiInputLabel-root': { color: 'rgba(255,255,255,0.7)' },
                 '& .MuiSvgIcon-root': { color: 'white' },
                 '& .MuiOutlinedInput-root': {
-                  '& fieldset': { borderColor: 'rgba(255,255,255,0.3)'},
+                  '& fieldset': { borderColor: 'rgba(255,255,255,0.3)' },
                   '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.5)' },
-                  '&.Mui-focused fieldset': { borderColor: 'white'}
+                  '&.Mui-focused fieldset': { borderColor: 'white' }
                 },
                 '& .MuiFormHelperText-root': {
                   color: 'rgba(255,255,255,0.7)'
@@ -247,8 +235,8 @@ const FindGymBuddy = () => {
                 </MenuItem>
               ))}
             </TextField>
-            
-            {/* Form action buttons */}
+
+            {/* Form buttons */}
             <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, marginTop: '10px' }}>
               <Button variant="contained" color="secondary" onClick={() => navigate('/')}>
                 Back
@@ -266,20 +254,19 @@ const FindGymBuddy = () => {
             </Box>
           )}
 
-          {/* Search results section */}
+          {/* Display found locations */}
           {locations.length > 0 && (
             <>
               <Typography variant="h6" sx={{ textAlign: 'center', marginTop: 2, fontWeight: '500', color: 'white' }}>
                 {locations.length} gym(s) found. Click on a marker to select:
               </Typography>
 
-              {/* Selected location preview */}
               {selectedLocation && (
-                <Box sx={{ 
-                  mb: 2, 
-                  p: 2, 
+                <Box sx={{
+                  mb: 2,
+                  p: 2,
                   border: '1px solid #ddd',
-                  borderRadius: 1, 
+                  borderRadius: 1,
                   backgroundColor: 'white',
                   color: 'black'
                 }}>
@@ -290,32 +277,28 @@ const FindGymBuddy = () => {
             </>
           )}
 
-          {/* Google Map display */}
+          {/* Display Google Map with gym markers */}
           {(locations.length > 0 || submitted) && (
             <GoogleMap
               mapContainerStyle={{ width: '100%', height: '400px' }}
               center={mapCenter}
               zoom={locations.length > 0 ? 12 : 4}
             >
-              {/* Map markers for each location */}
               {locations.map((location, index) => (
-                <Marker 
+                <Marker
                   key={index}
                   position={location.position}
                   onClick={() => handleMarkerClick(location)}
                   title={`${location.name || 'Gym'}\n${location.address}`}
-                  icon={{
-                    scaledSize: new window.google.maps.Size(32, 32)
-                  }}
                 />
               ))}
             </GoogleMap>
           )}
 
-          {/* Confirm button (only shown when locations found) */}
+          {/* Confirm button to proceed with selected gym */}
           {locations.length > 0 && (
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1, mb: 1, flex: '0 0 auto' }}>
-              <Button 
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1, mb: 1 }}>
+              <Button
                 variant="contained"
                 color="primary"
                 onClick={handleConfirm}
@@ -333,7 +316,7 @@ const FindGymBuddy = () => {
             </Box>
           )}
 
-          {/* No results message */}
+          {/* Message if no gyms were found after submission */}
           {submitted && locations.length === 0 && !loading && (
             <Typography variant="h6" sx={{ textAlign: 'center', marginTop: 2, color: 'white' }}>
               No gym locations found. Please check the details.
@@ -346,6 +329,8 @@ const FindGymBuddy = () => {
 };
 
 export default FindGymBuddy;
+
+
 
 
 
