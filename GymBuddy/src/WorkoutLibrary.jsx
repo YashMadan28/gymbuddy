@@ -5,10 +5,12 @@ import { auth } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import "./animations.css";
 
+// Navigation link to Workout Library
 <Link to="/workout_library">
   <button>Workout Library</button>
 </Link>;
 
+// Static workout data for splits and muscle groups
 const workoutData = {
   splits: [
     {
@@ -99,12 +101,17 @@ const workoutData = {
 };
 
 function WorkoutLibrary() {
+  // Track selected split, day, and muscle group
   const [activeSplit, setActiveSplit] = useState(null);
   const [activeDay, setActiveDay] = useState(null);
   const [activeMuscle, setActiveMuscle] = useState(null);
+
+  // Track user login status
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   const navigate = useNavigate();
 
+  // Check if user is authenticated (for showing custom workout button)
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setIsLoggedIn(!!user);
@@ -116,8 +123,8 @@ function WorkoutLibrary() {
     <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
       {isLoggedIn && (
         <button
-          onClick = {() => navigate("/workout_library/custom-workout")}
-          style = {{
+          onClick={() => navigate("/workout_library/custom-workout")}
+          style={{
             padding: "10px 20px",
             marginBottom: "20px",
             backgroundColor: "#4CAF50",
@@ -133,6 +140,7 @@ function WorkoutLibrary() {
       <div style={{ marginBottom: "40px " }}>
         <h2> Workout Splits</h2>
 
+        {/* Render split selection buttons */}
         <div
           className="frutiger"
           style={{
@@ -148,7 +156,7 @@ function WorkoutLibrary() {
               key={splitIndex}
               onClick={() => {
                 setActiveSplit(splitIndex);
-                setActiveDay(null);
+                setActiveDay(null); // Reset day selection on new split
               }}
             >
               <div className="inner" style={{ gap: "20px" }}>
@@ -158,6 +166,8 @@ function WorkoutLibrary() {
             </button>
           ))}
         </div>
+
+        {/* Render days for selected split */}
         {activeSplit !== null && (
           <div
             className="purpleGlow"
@@ -176,6 +186,8 @@ function WorkoutLibrary() {
             ))}
           </div>
         )}
+
+        {/* Show selected day’s focus and exercises */}
         {activeSplit !== null && activeDay !== null && (
           <div>
             <h3>{workoutData.splits[activeSplit].days[activeDay].dayName}</h3>
@@ -196,6 +208,8 @@ function WorkoutLibrary() {
 
       <div>
         <h2> Muscle Group Focus </h2>
+
+        {/* Render muscle group buttons */}
         <div
           style={{
             display: "flex",
@@ -221,6 +235,8 @@ function WorkoutLibrary() {
             </button>
           ))}
         </div>
+
+        {/* Show selected muscle group exercises */}
         {activeMuscle !== null && (
           <div>
             <h3>{workoutData.muscleGroups[activeMuscle].groupName}</h3>
@@ -234,6 +250,8 @@ function WorkoutLibrary() {
           </div>
         )}
       </div>
+
+      {/* Back button to navigate to homepage */}
       <button
         variant="contained"
         color="secondary"
@@ -247,3 +265,4 @@ function WorkoutLibrary() {
 }
 
 export default WorkoutLibrary;
+

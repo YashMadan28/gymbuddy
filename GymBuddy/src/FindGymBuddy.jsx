@@ -4,7 +4,7 @@ import { TextField, Button, Box, MenuItem, Typography, CircularProgress } from '
 import { GoogleMap, Marker, useLoadScript } from '@react-google-maps/api';
 import './FindGymBuddy.css';
 
-// List of US states for dropdown
+// List of US states for dropdown selection
 const states = [
   'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia',
   'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts',
@@ -15,29 +15,22 @@ const states = [
 ];
 
 const FindGymBuddy = () => {
-  // Form state management
-  const [formData, setFormData] = useState({
-    gymName: '',
-    city: '',
-    state: '',
-  });
-  
-  // Form validation errors
-  const [errors, setErrors] = useState({
-    gymName: false,
-    city: false,
-    state: false,
-  });
+  // Form input and validation state
+  const [formData, setFormData] = useState({ gymName: '', city: '', state: '' });
+  const [errors, setErrors] = useState({ gymName: false, city: false, state: false });
 
-  // Location search results
+  // State for fetched locations and map interaction
   const [locations, setLocations] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
+
+  // Loading and submission state
   const [loading, setLoading] = useState(false);
   // Track if the form has been submitted
   const [submitted, setSubmitted] = useState(false); 
   // State to control the confirmation dialog window
   const [openDialog, setOpenDialog] = useState(false);
 
+  // Navigation
   const navigate = useNavigate();
 
   // Use the useLoadScript hook to load the Google Maps API
@@ -55,6 +48,7 @@ const FindGymBuddy = () => {
       city: formData.city.trim() === '',
       state: formData.state.trim() === '',
     };
+
 
     setErrors(newErrors);
 
@@ -124,7 +118,7 @@ const FindGymBuddy = () => {
 
   // Handle errors while loading the Google Maps API
   if (loadError) {
-    return <Typography variant="h6" color="error">Error loading Google Maps API. Please try again later.</Typography>;
+    return <Typography variant="h6" color="error">Error loading Google Maps API.</Typography>;
   }
 
   // Show a loading spinner while the Google Maps API is being loaded
@@ -140,31 +134,31 @@ const FindGymBuddy = () => {
     <>
       {/* Background image */}
       <div className="backdrop-image" />
-      
-      {/* Main content container */}
+
+      {/* Scrollable container for form and results */}
       <div className="scroll-container">
         <Box
-          className="glass-effect" 
-          sx={{ 
+          className="glass-effect"
+          sx={{
             padding: '20px',
             maxWidth: '650px',
-            margin: 'auto', 
-            display: 'flex', 
-            flexDirection: 'column', 
+            margin: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
             gap: 2,
             marginTop: '50px',
             overflow: 'hidden',
             color: 'white'
           }}
         >
-          {/* Page header */}
+          {/* Page heading */}
           <Typography variant="h4" gutterBottom sx={{ color: 'white' }}>
             Find Gym Buddy
           </Typography>
-          
-          {/* Search form */}
+
+          {/* Form for gym input */}
           <form onSubmit={handleSubmit}>
-            {/* Gym name input */}
+            {/* Gym name field */}
             <TextField
               label="Gym Name"
               name="gymName"
@@ -178,17 +172,17 @@ const FindGymBuddy = () => {
                 input: { color: 'white' },
                 label: { color: 'rgba(255,255,255,0.7)', '&.Mui-focused': { color: 'white' } },
                 '& .MuiOutlinedInput-root': {
-                  '& fieldset': { borderColor: 'rgba(255,255,255,0.3)'},
+                  '& fieldset': { borderColor: 'rgba(255,255,255,0.3)' },
                   '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.5)' },
-                  '&.Mui-focused fieldset': { borderColor: 'white'}
+                  '&.Mui-focused fieldset': { borderColor: 'white' }
                 },
                 '& .MuiFormHelperText-root': {
                   color: 'rgba(255,255,255,0.7)'
                 }
               }}
             />
-            
-            {/* City input */}
+
+            {/* City field */}
             <TextField
               label="City"
               name="city"
@@ -202,17 +196,17 @@ const FindGymBuddy = () => {
                 input: { color: 'white' },
                 label: { color: 'rgba(255,255,255,0.7)', '&.Mui-focused': { color: 'white' } },
                 '& .MuiOutlinedInput-root': {
-                  '& fieldset': { borderColor: 'rgba(255,255,255,0.3)'},
+                  '& fieldset': { borderColor: 'rgba(255,255,255,0.3)' },
                   '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.5)' },
-                  '&.Mui-focused fieldset': { borderColor: 'white'}
+                  '&.Mui-focused fieldset': { borderColor: 'white' }
                 },
                 '& .MuiFormHelperText-root': {
                   color: 'rgba(255,255,255,0.7)'
                 }
               }}
             />
-            
-            {/* State dropdown */}
+
+            {/* State select field */}
             <TextField
               label="State"
               name="state"
@@ -228,9 +222,9 @@ const FindGymBuddy = () => {
                 '& .MuiInputLabel-root': { color: 'rgba(255,255,255,0.7)' },
                 '& .MuiSvgIcon-root': { color: 'white' },
                 '& .MuiOutlinedInput-root': {
-                  '& fieldset': { borderColor: 'rgba(255,255,255,0.3)'},
+                  '& fieldset': { borderColor: 'rgba(255,255,255,0.3)' },
                   '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.5)' },
-                  '&.Mui-focused fieldset': { borderColor: 'white'}
+                  '&.Mui-focused fieldset': { borderColor: 'white' }
                 },
                 '& .MuiFormHelperText-root': {
                   color: 'rgba(255,255,255,0.7)'
@@ -243,8 +237,8 @@ const FindGymBuddy = () => {
                 </MenuItem>
               ))}
             </TextField>
-            
-            {/* Form action buttons */}
+
+            {/* Form buttons */}
             <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, marginTop: '10px' }}>
               <Button variant="contained" color="secondary" onClick={() => navigate('/')}>
                 Back

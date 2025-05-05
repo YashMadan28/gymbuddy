@@ -18,7 +18,7 @@ const MessagesSchema = new mongoose.Schema({
   read: { type: Boolean, default: false }
 }, { timestamps: true });
 
-// For conversation lookup
+// Index for efficient querying of conversations
 MessagesSchema.index({ sender: 1, receiver: 1, createdAt: -1 });
 
 const Messages = mongoose.model('Messages', MessagesSchema);

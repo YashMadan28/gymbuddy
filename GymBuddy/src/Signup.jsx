@@ -9,22 +9,27 @@ import { createUserProfile } from "./services/profile-api";
 import "./landingpage.css";
 
 const Signup = () => {
+
   const formRef = useRef(null);
   const navigate = useNavigate();
+
+  // Tracks submission state to prevent double submission
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Handles user registration logic
   const handleRegister = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-  
+
     const formElement = formRef.current;
     if (!formElement) return;
-  
+
+    // Extract form data into object
     const formData = new FormData(formElement);
     const { name, email, password } = Object.fromEntries(formData.entries());
-  
+
     try {
-      // Validate inputs
+      // Input validation
       if (!name || !email || !password) {
         throw new Error("All fields are required");
       }
@@ -32,35 +37,36 @@ const Signup = () => {
         throw new Error("Password should be at least 6 characters");
       }
 
-      // Create Firebase auth user
+      // Create user in Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      
-      // Update Firebase auth profile with name
+
+      // Set user's display name in Firebase profile
       await updateProfile(userCredential.user, {
         displayName: name
       });
 
-      // Create user profile in MongoDB (only pass name - service will handle UID/email)
+      // Create the corresponding MongoDB user profile
       const profileResponse = await createUserProfile(name);
 
+      // If MongoDB profile creation fails, remove Firebase user and show error
       if (!profileResponse.success) {
-        // If MongoDB profile creation fails, delete the Firebase user
         await userCredential.user.delete();
         throw new Error(profileResponse.message || "Failed to create user profile");
       }
-      
+
+      // Show success message, navigate after a short delay
       toast.success("Account created successfully!", {
         position: "top-right",
         autoClose: 1000,
         onClose: () => navigate("/login")
       });
-  
+
       formElement.reset();
     } catch (err) {
       console.error("Registration error:", err);
       let errorMessage = err.message;
-      
-      // Handle specific Firebase errors
+
+      // Error validation
       if (err.code) {
         switch (err.code) {
           case "auth/email-already-in-use":
@@ -76,7 +82,8 @@ const Signup = () => {
             errorMessage = "Registration failed. Please try again.";
         }
       }
-      
+
+      // Display error message
       toast.error(errorMessage, {
         position: "top-right",
         autoClose: 5000,
@@ -88,10 +95,13 @@ const Signup = () => {
 
   return (
     <div className="landing-page-container">
+      {/* Toast container for notifications */}
       <ToastContainer />
+
       <div id="app" className="h-100">
         <div className="landing-wrapper animation left">
           <div className="landing-wrapper-inner">
+            {/* Header section with title and dumbbell icon */}
             <header className="header-container">
               <h2 className="title animation a1">Join GymBuddy</h2>
               <div className="dumbbell-container animation a2">
@@ -110,8 +120,11 @@ const Signup = () => {
                 </svg>
               </div>
             </header>
+
+            {/* Signup form section */}
             <div className="main-form">
               <form ref={formRef} onSubmit={handleRegister}>
+                {/* Name input with icon */}
                 <div className="form-group icon-input animation a3">
                   <FaUser className="input-icon" />
                   <input
@@ -125,6 +138,8 @@ const Signup = () => {
                     disabled={isSubmitting}
                   />
                 </div>
+
+                {/* Email input with icon */}
                 <div className="form-group icon-input animation a4">
                   <FaEnvelope className="input-icon" />
                   <input
@@ -136,6 +151,8 @@ const Signup = () => {
                     disabled={isSubmitting}
                   />
                 </div>
+
+                {/* Password input with icon */}
                 <div className="form-group icon-input animation a5">
                   <FaLock className="input-icon" />
                   <input
@@ -148,12 +165,16 @@ const Signup = () => {
                     disabled={isSubmitting}
                   />
                 </div>
+
+                {/* Submit button */}
                 <input 
                   type="submit" 
-                  value={isSubmitting ? "Creating Account..." : "Sign Up"}
+                  value="Sign Up"
                   className="btn-submit animation a6" 
                   disabled={isSubmitting}
                 />
+
+                {/* Link to login page */}
                 <div className="auth-options">
                   <p className="auth-text animation a7">
                     Already have an account? <a href="/login" className="auth-link">Log In</a>
@@ -163,6 +184,8 @@ const Signup = () => {
             </div>
           </div>
         </div>
+
+        {/* Right-side background image section */}
         <div className="landing-wallpaper-box right">
           <div className="landing-wallpaper">
             <img src="/landing_page_image.jpg" alt="Signup background" />

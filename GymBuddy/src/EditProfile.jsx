@@ -10,34 +10,28 @@ const EditProfile = () => {
     fileInputRef.current.click();
   };
 
+  // Handle profile picture file selection
   const handlePictureChange = (event) => {
     const file = event.target.files[0];
     if (file) {
       setSelectedImageFile(file);
       const previewURL = URL.createObjectURL(file);
-      setEditedProfile(prev => ({ 
-        ...prev, 
-        profilePicture: previewURL 
-      }));
+      setEditedProfile(prev => ({ ...prev, profilePicture: previewURL }));
     }
   };
 
-  // Handle gym selection from popup
+  // Save selected gym from popup
   const handleSaveGym = (selectedGym) => {
     setEditedProfile(prev => ({
       ...prev,
       gym: `${selectedGym.gymName}, ${selectedGym.address}`,
-      gymPlaceId: selectedGym.place_id
     }));
     setEditDialogOpen(false);
   };
 
-  // Generic input change handler
+  // Update individual form fields
   const handleInputChange = (field, value) => {
-    setEditedProfile(prev => ({
-      ...prev,
-      [field]: value,
-    }));
+    setEditedProfile(prev => ({ ...prev, [field]: value }));
   };
 
     return (
@@ -103,6 +97,7 @@ const EditProfile = () => {
                 }}
             />
 
+      {/* Age input */}
       <TextField
         label="Age"
         variant="outlined"
@@ -114,7 +109,7 @@ const EditProfile = () => {
         helperText={formSubmitted && (isNaN(editedProfile.age) || editedProfile.age < 13 || editedProfile.age > 120) ? "Age must be between 13 and 120" : ""}
       />
 
-      {/* Gender dropdown */}
+      {/* Gender select input */}
       <FormControl fullWidth sx={fieldStyle}>
         <InputLabel id="gender-label">Gender</InputLabel>
         <Select
@@ -132,7 +127,7 @@ const EditProfile = () => {
         </Select>
       </FormControl>
 
-      {/* Gym field with popup */}
+      {/* Gym field (when clicked, will open gym search popup) */}
       <TextField
         label="Gym"
         variant="outlined"
@@ -143,7 +138,7 @@ const EditProfile = () => {
         inputProps={{ readOnly: true }}
       />
 
-      {/* Gym selection popup */}
+      {/* Gym search popup */}
       <EditGymPopup
         open={editDialogOpen}
         onClose={() => setEditDialogOpen(false)}
@@ -155,7 +150,7 @@ const EditProfile = () => {
         }}
       />
 
-      {/* About me textarea */}
+      {/* About Me textbox */}
       <TextField
         label="About Me"
         variant="outlined"
@@ -167,7 +162,7 @@ const EditProfile = () => {
         rows={4}
       />
 
-      {/* Save changes button */}
+      {/* Save button */}
       <div className="profileView">
         <Button
           variant="contained"
@@ -180,7 +175,7 @@ const EditProfile = () => {
         </Button>
       </div>
 
-      {/* Error display */}
+      {/* Error message display */}
       {error && <Typography color="error" sx={{ mt: 2 }}>{error}</Typography>}
     </Box>
   );
