@@ -19,7 +19,7 @@ const UserSchema = new mongoose.Schema({
   },
   profilePicture: { 
     type: String, 
-    default: "https://firebasestorage.googleapis.com/v0/b/gymbuddy-d7838.appspot.com/o/default_image.jpg?alt=media&token=f094d2d7-b0e6-4be7-905b-cb154fb4df79"
+    default: "https://firebasestorage.googleapis.com/v0/b/gymbuddy-d7838.firebasestorage.app/o/default_image.jpg?alt=media&token=f094d2d7-b0e6-4be7-905b-cb154fb4df79"
   },
   age: { 
     type: Number,
@@ -37,8 +37,7 @@ const UserSchema = new mongoose.Schema({
     maxlength: [500, 'About cannot exceed 500 characters']
   },
   gym: { 
-    display: String,  // e.g., "Gym Name, 123 Main St"
-    place_id: String  // Google Places ID (unique to each location)
+    display: { type: String }  // Ex: "Gym Name, 123 Main St"
   }
 });
 

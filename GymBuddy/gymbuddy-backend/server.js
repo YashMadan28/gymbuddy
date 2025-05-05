@@ -1,48 +1,148 @@
+// Load environment variables from .env file
 require('dotenv').config();
+
+// Core and Middleware imports
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
 const http = require('http');
 const multer = require('multer');
-const { verifyToken } = require('./firebase/firebaseAdmin');
-const Messages = require('./models/Messages');
+const { v4: uuidv4 } = require('uuid');
 const { Server } = require('socket.io');
-const { ref, uploadBytes, getDownloadURL } = require('firebase/storage');
-const storage = require('./firebase/firebaseAdmin');
-const User = require('./models/User'); // Import the User model
+
+// Custom Firebase Admin auth + storage
+const { verifyToken, bucket } = require('./firebase/firebaseAdmin');
+
+// MongdoDB Models imports
+const mongoose = require('mongoose');
+const Messages = require('./models/Messages');
+const ChatList = require('./models/ChatList');
+const User = require('./models/User');
 const Workout = require('./models/Workout');
-require('dotenv').config();
 
-
+/* Express app setup */
 const app = express();
+// Create HTTP server for Socket.IO integration
+const server = http.createServer(app);
 const port = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors());
+// Socket.io setup //
+const io = new Server(server, {
+  cors: {
+    origin: process.env.FRONTEND_URL,
+    methods: ['GET', 'POST'],
+    credentials: true
+  }
+});
+
+/* Middleware setup */
+// Enable CORS for frontend
+app.use(cors({
+  origin: process.env.FRONTEND_URL,
+  credentials: true
+}));
+// Enable JSON request parsing
 app.use(express.json());
 
-// Multer setup for image upload
-const upload = multer({ storage: multer.memoryStorage() }); // Save file in memory
+// Store uploaded files in memory
+const upload = multer({
+  storage: multer.memoryStorage()
+});
 
-// MongoDB connection
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, retryWrites: true, w: 'majority', ssl: true })
-.then(() => {
-  console.log(`✅ Connected to MongoDB database: "${mongoose.connection.db.databaseName}"`);
-})
-.catch(err => {
+// Database connection
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  retryWrites: true,
+  w: 'majority',
+  ssl: true
+}).then(() => {
+  console.log(`✅ Connected to MongoDB: "${mongoose.connection.db.databaseName}"`);
+}).catch(err => {
   console.error('MongoDB connection error:', err);
 });
 
-///////* User Profile section */////////
+// ──────── API ROUTES ──────── //
 
-// Create initial profile (email + name only)
+// ---------- USER ROUTES ---------- //
+
+// Get users by gym name
+app.get('/api/users/by-gym', verifyToken, async (req, res) => {
+  try {
+    const gym_display = req.query.gym_display?.trim();
+
+    if (!gym_display) {
+      return res.status(400).json({
+        success: false,
+        message: "Valid gym_display string is required"
+      });
+    }
+
+    const users = await User.aggregate([
+      { $addFields: { gym_display_lower: { $toLower: "$gym.display" } } },
+      {
+        $match: {
+          gym_display_lower: gym_display.toLowerCase(),
+          firebaseUid: { $ne: req.user.uid }
+        }
+      },
+      {
+        $project: {
+          name: 1,
+          profilePicture: 1,
+          age: 1,
+          gender: 1,
+          firebaseUid: 1,
+          "gym.display": 1
+        }
+      }
+    ]);
+
+    res.json({
+      success: true,
+      data: users
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+  }
+});
+
+// Search users by name
+app.get('/api/users/search', verifyToken, async (req, res) => {
+  try {
+    const nameQuery = req.query.name?.trim();
+
+    if (!nameQuery) {
+      return res.status(400).json({
+        users: []
+      });
+    }
+
+    const users = await User.find({
+      name: { $regex: new RegExp(nameQuery, 'i') },
+      firebaseUid: { $ne: req.user.uid }
+    }).select('_id name profilePicture');
+
+    res.json({ users });
+  } catch (error) {
+    res.status(500).json({
+      message: 'Search failed',
+      users: []
+    });
+  }
+});
+
+// Create a new user profile
 app.post('/api/users', verifyToken, async (req, res) => {
   try {
     const { firebaseUid, email, name } = req.body;
 
-    // Basic validation
     if (!firebaseUid || !email || !name) {
-      return res.status(400).json({ message: 'Missing required fields' });
+      return res.status(400).json({
+        message: 'Missing required fields'
+      });
     }
 
     const user = new User({ firebaseUid, email, name });
@@ -53,20 +153,19 @@ app.post('/api/users', verifyToken, async (req, res) => {
     if (error.code === 11000) {
       res.status(400).json({ message: 'User already exists' });
     } else {
-      res.status(500).json({ message: 'Server error', error: error.message });
+      res.status(500).json({
+        message: 'Server error',
+        error: error.message
+      });
     }
   }
 });
 
-// Update the user profile
+// Update user profile (excluding image)
 app.put('/api/users/:firebaseUid', verifyToken, async (req, res) => {
   try {
-    // Convert string gym to object format if needed
     if (typeof req.body.gym === 'string') {
-      req.body.gym = {
-        display: req.body.gym,
-        place_id: `legacy_${req.params.firebaseUid}`
-      };
+      req.body.gym = { display: req.body.gym };
     }
 
     const user = await User.findOneAndUpdate(
@@ -75,396 +174,395 @@ app.put('/api/users/:firebaseUid', verifyToken, async (req, res) => {
       { new: true, runValidators: true }
     );
 
-    if (!user) return res.status(404).json({ message: 'User not found' });
+    if (!user) {
+      return res.status(404).json({
+        message: 'User not found'
+      });
+    }
+
     res.json(user);
   } catch (error) {
-    res.status(500).json({ message: 'Error updating profile', error: error.message });
+    res.status(500).json({
+      message: 'Error updating profile',
+      error: error.message
+    });
   }
 });
 
-// Get user by Firebase UID
-app.get('/api/users/:firebaseUid', verifyToken, async (req, res) => {
-  try {
-    const user = await User.findOne({ firebaseUid: req.params.firebaseUid });
-    if (!user) return res.status(404).json({ message: 'User not found' });
-    res.json(user);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching user', error: error.message });
-  }
-});
-
-
-// Upload profile picture to Firebase and update user profile
+// Upload user profile image
 app.post('/api/users/:firebaseUid/upload', verifyToken, upload.single('profileImage'), async (req, res) => {
   if (!req.file) {
-    return res.status(400).json({ message: 'No file uploaded' });
+    return res.status(400).json({
+      message: 'No file uploaded'
+    });
   }
 
   try {
-    // Create a reference to Firebase Storage where the image will be stored
-    const storageRef = ref(storage, `profileImages/${req.params.firebaseUid}-${Date.now()}-${req.file.originalname}`);
+    const { firebaseUid } = req.params;
 
-    // Upload the image to Firebase Storage
-    await uploadBytes(storageRef, req.file.buffer);
+    const filename = `profileImages/${firebaseUid}-${Date.now()}-${req.file.originalname}`;
+    const file = bucket.file(filename);
 
-    // Get the image URL after upload
-    const imageUrl = await getDownloadURL(storageRef);
+    const metadata = {
+      contentType: req.file.mimetype,
+      metadata: {
+        firebaseStorageDownloadTokens: uuidv4()
+      }
+    };
 
-    // Update the user's profile in MongoDB with the image URL
+    await file.save(req.file.buffer, { metadata });
+
+    const imageUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(filename)}?alt=media&token=${metadata.metadata.firebaseStorageDownloadTokens}`;
+
     const user = await User.findOneAndUpdate(
-      { firebaseUid: req.params.firebaseUid },
+      { firebaseUid },
       { profilePicture: imageUrl },
       { new: true, runValidators: true }
     );
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({
+        message: 'User not found'
+      });
     }
 
-    res.status(200).json({ message: 'Profile image uploaded successfully', imageUrl });
+    res.status(200).json({
+      message: 'Profile image uploaded successfully',
+      imageUrl
+    });
   } catch (error) {
-    console.error('Error uploading file:', error);
-    res.status(500).json({ message: 'Error uploading file', error: error.message });
+    res.status(500).json({
+      message: 'Error uploading profile image',
+      error: error.message
+    });
   }
 });
 
-///////* Public other user profile route */////////
+// Get full user object by firebaseUid
+app.get('/api/users/:firebaseUid', verifyToken, async (req, res) => {
+  try {
+    const user = await User.findOne({ firebaseUid: req.params.firebaseUid });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({
+      message: 'Error fetching user',
+      error: error.message
+    });
+  }
+});
+
+// Get public profile for another user
 app.get('/api/users/:userId/public', verifyToken, async (req, res) => {
   try {
-    const user = await User.findById(req.params.userId)
-      .select('name age gender gym about profilePicture')
-      .lean();
+    const user = await User.findById(req.params.userId).select('name age gender gym about profilePicture').lean();
 
-    if (!user) return res.status(404).json({ message: 'User not found' });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
     res.json(user);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
 });
 
+// ---------- MESSAGES ROUTES ---------- //
 
-app.get('/api/users/by-gym', verifyToken, async (req, res) => {
+// Upload image in a message and notify both users via socket
+app.post('/api/messages/:senderId/:receiverId/upload', upload.single('file'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: 'No file uploaded' });
+  }
+
   try {
-    const { place_id } = req.query;
-    const currentUserId = req.user.uid;
+    const { senderId, receiverId } = req.params;
 
-    // Validate input
-    if (!place_id || typeof place_id !== 'string') {
-      return res.status(400).json({ 
-        success: false,
-        message: "Valid place_id string is required" 
-      });
-    }
+    const filename = `chat-images/${Date.now()}-${req.file.originalname}`;
+    const file = bucket.file(filename);
 
-    // Query with exact match and case sensitivity
-    const users = await User.find({
-      firebaseUid: { $ne: currentUserId },
-      'gym.place_id': { $eq: place_id } // Explicit equality match
-    })
-    .select('name profilePicture age gender firebaseUid') // Include firebaseUid for messaging
-    .lean();
-
-    // Add debugging logs (remove in production)
-    console.log(`Found ${users.length} users for place_id: ${place_id}`);
-    if (users.length > 0) {
-      console.log('Sample user gym data:', users[0].gym);
-    }
-
-    return res.json({
-      success: true,
-      data: users
+    await file.save(req.file.buffer, {
+      metadata: {
+        contentType: req.file.mimetype,
+        metadata: { firebaseStorageDownloadTokens: uuidv4() }
+      }
     });
 
+    const imageUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(filename)}?alt=media&token=${file.metadata.metadata.firebaseStorageDownloadTokens}`;
+
+    const message = await Messages.create({
+      sender: senderId,
+      receiver: receiverId,
+      imageUrl,
+      read: false
+    });
+
+    [senderId, receiverId].forEach(id => {
+      if (onlineUsers.has(id)) {
+        io.to(`user_${id}`).emit('newMessage', message);
+      }
+    });
+
+    res.status(201).json({ success: true, imageUrl });
   } catch (error) {
-    console.error('Database search error:', error);
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-      data: []
-    });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
-///////* Messages section */////////
-
-// Initialize Firebase storage
-// This is a workaround to dynamically import the ES Module
-
-
-// HTTP server
-const server = http.createServer(app);
-
-// Socket.io setup
-const io = new Server(server, {
-  cors: {
-    origin: process.env.FRONTEND_URL,
-    methods: ['GET', 'POST']
-  }
-});
-
-// Track online users
-const onlineUsers = new Map();
-
-io.on('connection', (socket) => {
-  console.log('New connection:', socket.id);
-
-  // User authentication
-  socket.on('authenticate', async (userId) => {
-    onlineUsers.set(userId, socket.id);
-    socket.join(`user_${userId}`);
-    
-    // Mark user as online
-    await User.findByIdAndUpdate(userId, { lastActive: new Date() });
-  });
-
-  // Message handler
-  socket.on('sendMessage', async ({ senderId, receiverId, text }) => {
-    try {
-      const message = new Messages({  // Changed to Messages
-        sender: senderId,
-        receiver: receiverId,
-        text,
-        read: false
-      });
-      await message.save();
-
-      // Emit to receiver if online
-      if (onlineUsers.has(receiverId)) {
-        io.to(`user_${receiverId}`).emit('newMessage', message);
-      }
-
-      // Also send back to sender for their UI
-      socket.emit('messageSent', message);
-    } catch (error) {
-      console.error('Message send error:', error);
-      socket.emit('error', 'Failed to send message');
-    }
-  });
-
-  // Image message handler
-  socket.on('sendImage', async ({ senderId, receiverId, fileData }, callback) => {
-    try {
-      // Upload to Firebase
-      const storageRef = ref(storage, `chat-images/${Date.now()}-${fileData.name}`);
-      const fileBuffer = Buffer.from(fileData.data.split(',')[1], 'base64');
-      await uploadBytes(storageRef, fileBuffer);
-      
-      // Get download URL
-      const imageUrl = await getDownloadURL(storageRef);
-
-      // Save to MongoDB
-      const message = new Messages({
-        sender: senderId,
-        receiver: receiverId,
-        imageUrl,
-        read: false
-      });
-      await message.save();
-
-      // Deliver to recipient
-      if (onlineUsers.has(receiverId)) {
-        io.to(`user_${receiverId}`).emit('newMessage', message);
-      }
-      callback({ success: true, imageUrl });
-    } catch (error) {
-      console.error('Image upload failed:', error);
-      callback({ success: false, error: 'Upload failed' });
-    }
-  });
-
-  // Add this inside the socket.io connection handler
-socket.on('markAsRead', async ({ userId, otherUserId }) => {
-  try {
-    await Messages.updateMany(
-      {
-        sender: otherUserId,
-        receiver: userId,
-        read: false
-      },
-      { $set: { read: true } }
-    );
-    
-    // Notify the other user that messages were read
-    if (onlineUsers.has(otherUserId)) {
-      io.to(`user_${otherUserId}`).emit('messagesRead', { userId });
-    }
-  } catch (error) {
-    console.error('Error marking messages as read:', error);
-  }
-});
-
-  // Disconnect handler
-  socket.on('disconnect', () => {
-    onlineUsers.forEach((socketId, userId) => {
-      if (socketId === socket.id) {
-        onlineUsers.delete(userId);
-      }
-    });
-  });
-});
-
-// REST API Routes
+// Get all messages between two users
 app.get('/api/messages/:userId/:otherUserId', async (req, res) => {
   try {
-    const messages = await Messages.find({  // Changed to Messages
+    const messages = await Messages.find({
       $or: [
         { sender: req.params.userId, receiver: req.params.otherUserId },
         { sender: req.params.otherUserId, receiver: req.params.userId }
       ]
     }).sort({ createdAt: 1 });
-    
+
     res.json(messages);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// Get user's chat list
-app.get('/api/users/:userId/chats', verifyToken, async (req, res) => {
-  try {
-    const userId = req.params.userId;
-    
-    // Get all unique users this user has chatted with
-    const chatPartners = await Messages.aggregate([
-      {
-        $match: {
-          $or: [
-            { sender: mongoose.Types.ObjectId(userId) },
-            { receiver: mongoose.Types.ObjectId(userId) }
-          ]
-        }
-      },
-      {
-        $group: {
-          _id: null,
-          partners: {
-            $addToSet: {
-              $cond: [
-                { $eq: ["$sender", mongoose.Types.ObjectId(userId)] },
-                "$receiver",
-                "$sender"
-              ]
-            }
-          }
-        }
-      }
-    ]);
+// ---------- CHATLIST ROUTES ---------- //
 
-    if (!chatPartners.length) {
+// Get chat partners and last message for a user
+app.get('/api/chatlist/:userId', async (req, res) => {
+  try {
+    const list = await ChatList.findOne({ userId: req.params.userId })
+      .populate({
+        path: 'chatPartners.partnerId',
+        select: 'name profilePicture lastActive'
+      })
+      .populate({
+        path: 'chatPartners.lastMessage',
+        populate: [
+          { path: 'sender', select: 'name' },
+          { path: 'receiver', select: 'name' }
+        ]
+      });
+
+    if (!list) {
       return res.json([]);
     }
 
-    // Get user details for each chat partner
-    const partnersWithDetails = await User.aggregate([
-      {
-        $match: {
-          _id: { $in: chatPartners[0].partners }
-        }
-      },
-      {
-        $lookup: {
-          from: "messages",
-          let: { userId: "$_id" },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $or: [
-                    {
-                      $and: [
-                        { $eq: ["$sender", "$$userId"] },
-                        { $eq: ["$receiver", mongoose.Types.ObjectId(userId)] }
-                      ]
-                    },
-                    {
-                      $and: [
-                        { $eq: ["$sender", mongoose.Types.ObjectId(userId)] },
-                        { $eq: ["$receiver", "$$userId"] }
-                      ]
-                    }
-                  ]
-                }
-              }
-            },
-            { $sort: { createdAt: -1 } },
-            { $limit: 1 }
-          ],
-          as: "lastMessage"
-        }
-      },
-      {
-        $addFields: {
-          lastMessage: { $arrayElemAt: ["$lastMessage", 0] }
-        }
-      },
-      {
-        $project: {
-          _id: 1,
-          name: 1,
-          profilePicture: 1,
-          lastMessage: 1,
-          isOnline: {
-            $cond: {
-              if: { $gt: ["$lastActive", new Date(Date.now() - 5 * 60 * 1000)] },
-              then: true,
-              else: false
-            }
-          }
-        }
-      },
-      { $sort: { "lastMessage.createdAt": -1 } }
-    ]);
+    const chatUsers = list.chatPartners.map(p => {
+      if (!p.partnerId) return null;
 
-    res.json(partnersWithDetails);
-  } catch (error) {
-    console.error('Error fetching chats:', error);
-    res.status(500).json({ error: error.message });
+      return {
+        _id: p.partnerId._id,
+        name: p.partnerId.name,
+        profilePicture: p.partnerId.profilePicture,
+        isOnline: new Date(p.partnerId.lastActive) > new Date(Date.now() - 5 * 60 * 1000),
+        lastMessage: p.lastMessage || null
+      };
+    }).filter(Boolean);
+
+    res.json(chatUsers);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching chatlist" });
   }
 });
 
+// Add a chat partner to a user's chat list
+app.post('/api/chatlist/add', async (req, res) => {
+  const { userId, partnerId } = req.body;
 
-// Get user's workouts
+  if (!userId || !partnerId) {
+    return res.status(400).json({ message: "userId and partnerId are required" });
+  }
+
+  try {
+    let chatList = await ChatList.findOne({ userId });
+
+    if (!chatList) {
+      chatList = await ChatList.create({
+        userId,
+        chatPartners: [{ partnerId }]
+      });
+    } else {
+      const exists = chatList.chatPartners.some(
+        p => p.partnerId.toString() === partnerId
+      );
+
+      if (!exists) {
+        chatList.chatPartners.push({ partnerId });
+        await chatList.save();
+      }
+    }
+
+    res.json(chatList);
+  } catch (err) {
+    res.status(500).json({ message: "Could not add chat partner" });
+  }
+});
+
+// Remove a chat partner from a user's chat list
+app.delete('/api/chatlist/:userId/:partnerId', async (req, res) => {
+  try {
+    const chatList = await ChatList.findOneAndUpdate(
+      { userId: req.params.userId },
+      { $pull: { chatPartners: { partnerId: req.params.partnerId } } },
+      { new: true }
+    );
+
+    res.json(chatList);
+  } catch (err) {
+    res.status(500).json({ message: "Could not remove chat partner" });
+  }
+});
+
+// ---------- WORKOUT ROUTES ---------- //
+
+// Get workouts for authenticated user
 app.get('/api/workouts/:userId', verifyToken, async (req, res) => {
   try {
-    const userId = req.params.userId;
-    if (userId !== req.user.uid) {
+    if (req.params.userId !== req.user.uid) {
       return res.status(403).json({ message: 'Unauthorized access' });
     }
-    const workouts = await Workout.findOne({ userId });
-    res.json(workouts || { exercises: []});
+
+    const workouts = await Workout.findOne({ userId: req.params.userId });
+
+    res.json(workouts || { exercises: [] });
   } catch (error) {
-    console.error('Error fetching workouts:', error);
     res.status(500).json({ message: error.message });
   }
 });
 
-// Create/Update workout
+// Create or update workouts
 app.put('/api/workouts/:userId', verifyToken, async (req, res) => {
   try {
-    const userId = req.params.userId;
-    if (userId !== req.user.uid) {
+    if (req.params.userId !== req.user.uid) {
       return res.status(403).json({ message: 'Unauthorized access' });
     }
-    const { exercises } = req.body;
 
     const workout = await Workout.findOneAndUpdate(
-      { userId },
-      { 
-        userId,
-        exercises
+      { userId: req.params.userId },
+      {
+        userId: req.params.userId,
+        exercises: req.body.exercises
       },
-      { new: true, upsert: true }
+      {
+        new: true,
+        upsert: true
+      }
     );
-    
+
     res.json(workout);
   } catch (error) {
-    console.error('Error updating workouts:', error);
     res.status(500).json({ message: error.message });
   }
 });
 
-// Start the server
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+// ──────── SOCKET.IO EVENTS ──────── //
+
+const onlineUsers = new Map();
+
+io.on('connection', (socket) => {
+  // Authenticate and join user to a room
+  socket.on('authenticate', async (userId) => {
+    if (!userId) return;
+
+    onlineUsers.set(userId, socket.id);
+    socket.join(`user_${userId}`);
+
+    await User.findByIdAndUpdate(userId, {
+      lastActive: new Date()
+    });
+  });
+
+  // Internal helpers
+  async function ensureChatPartner(userId, partnerId) {
+    let chatList = await ChatList.findOne({ userId });
+
+    if (!chatList) {
+      await ChatList.create({
+        userId,
+        chatPartners: [{ partnerId }]
+      });
+    } else {
+      const exists = chatList.chatPartners.some(
+        p => p.partnerId.toString() === partnerId
+      );
+
+      if (!exists) {
+        chatList.chatPartners.push({ partnerId });
+        await chatList.save();
+      }
+    }
+  }
+
+  async function updateLastMessage(userId, partnerId, messageId) {
+    await ChatList.updateOne(
+      { userId, "chatPartners.partnerId": partnerId },
+      { $set: { "chatPartners.$.lastMessage": messageId } }
+    );
+  }
+
+  // Send a message
+  socket.on('sendMessage', async ({ senderId, receiverId, text, imageUrl }) => {
+    try {
+      const message = await Messages.create({
+        sender: senderId,
+        receiver: receiverId,
+        text,
+        imageUrl,
+        read: false
+      });
+
+      await ensureChatPartner(senderId, receiverId);
+      await ensureChatPartner(receiverId, senderId);
+
+      await updateLastMessage(senderId, receiverId, message._id);
+      await updateLastMessage(receiverId, senderId, message._id);
+
+      if (onlineUsers.has(receiverId)) {
+        io.to(`user_${receiverId}`).emit('newMessage', message);
+      }
+
+      socket.emit('messageSent', message);
+    } catch (error) {
+      socket.emit('error', 'Failed to send message');
+    }
+  });
+
+  // Mark messages as read
+  socket.on('markAsRead', async ({ userId, otherUserId }) => {
+    try {
+      await Messages.updateMany(
+        {
+          sender: otherUserId,
+          receiver: userId,
+          read: false
+        },
+        { $set: { read: true } }
+      );
+
+      if (onlineUsers.has(userId)) {
+        io.to(`user_${userId}`).emit('messagesRead', {
+          fromUserId: otherUserId
+        });
+      }
+    } catch (error) {}
+  });
+
+  // Clean up on disconnect
+  socket.on('disconnect', () => {
+    for (const [userId, socketId] of onlineUsers.entries()) {
+      if (socketId === socket.id) {
+        onlineUsers.delete(userId);
+        break;
+      }
+    }
+  });
 });
 
+// ──────── START SERVER ──────── //
+server.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
+});
