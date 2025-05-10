@@ -80,7 +80,7 @@ const Chatlist = ({
       {/* Sidebar search bar */}
       <div className="search">
         <div className="searchBar">
-          <img src="/search.png" alt="search" />
+          <img src="https://firebasestorage.googleapis.com/v0/b/gymbuddy-d7838.firebasestorage.app/o/search.png?alt=media&token=599c4949-4df0-4823-a022-acb15e3f27c0" alt="search" />
           <input
             type="text"
             placeholder="Search your chats..."
@@ -91,7 +91,7 @@ const Chatlist = ({
 
         {/* Add new chat button (opens modal) */}
         <div className="add" onClick={() => setSearchMode(true)}>
-          <img src="./plus.png" alt="add" />
+          <img src="https://firebasestorage.googleapis.com/v0/b/gymbuddy-d7838.firebasestorage.app/o/plus.png?alt=media&token=d1145344-e188-4fb3-8494-600b26020f18" alt="add" />
         </div>
       </div>
 

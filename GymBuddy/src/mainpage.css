@@ -1,0 +1,138 @@
+/* Container that fills the entire viewport and sets up a column layout */
+.main-page-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Central content area with background image and centered items */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-image: url("https://firebasestorage.googleapis.com/v0/b/gymbuddy-d7838.firebasestorage.app/o/main_page.jpg?alt=media&token=a28063a9-4977-4d06-9944-ff09e487c811");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    position: relative;
+    margin-top: 64px;
+    margin-bottom: 60px;
+    overflow: auto;
+}
+
+/* Dark overlay to improve text readability over the background image */
+.main-content::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 0;
+}
+
+/* Ensures main content elements appear above the dark overlay */
+.main-content > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Heading text with large font and shadow */
+.animated-text {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 3rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    padding: 0 20px;
+}
+
+/* Container for the icon and label, stacked vertically and clickable */
+.icon-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+}
+
+/* Circular container for the icon, centered content */
+.pulse-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* Dumbbell icon with animation and higher layer position */
+.dumbbell-icon {
+    font-size: 5rem !important;
+    color: #4285F4;
+    z-index: 2;
+    position: relative;
+    animation: subtle-pulse 2s ease-in-out infinite;
+}
+
+/* Animated ring that pulses behind the dumbbell icon */
+.pulse-circle::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: rgba(66, 133, 244, 0.1);
+    z-index: 1;
+    animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* Container for the label under the icon with dark background and blur */
+.icon-text-container {
+    margin-top: 20px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 8px 24px;
+    border-radius: 25px;
+    backdrop-filter: blur(5px);
+}
+
+/* Label text under the icon with styling and shadow */
+.icon-text {
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: white;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    letter-spacing: 0.5px;
+    margin: 0;
+}
+
+/* Animation for gently pulsing the dumbbell icon */
+@keyframes subtle-pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* Animation for expanding and fading the background ring */
+@keyframes pulse-ring {
+    0% {
+        transform: scale(0.8);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1.2);
+        opacity: 0;
+    }
+}

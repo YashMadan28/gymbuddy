@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { FaUser, FaLock } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -31,7 +31,7 @@ const Login = () => {
       toast.success("Logged in successfully!", {
         position: "top-right",
         autoClose: 1000,
-        onClose: () => navigate("/")
+        onClose: () => navigate("/home")
       });
 
       // Reset the form
@@ -115,10 +115,10 @@ const Login = () => {
                 {/* Navigation links */}
                 <div className="auth-options">
                   <p className="auth-text animation a6">
-                    Don't have an account? <a href="/signup" className="auth-link">Sign up</a>
+                    Don't have an account? <Link to="/signup" className="auth-link">Sign up</Link>
                   </p>
                   <p className="auth-text animation a7">
-                    Or <a href="/" className="auth-link">continue as guest</a>
+                    Or <Link to="/home" className="auth-link">continue as guest</Link>
                   </p>
                 </div>
               </form>
@@ -129,7 +129,7 @@ const Login = () => {
         {/* Right-side background image */}
         <div className="landing-wallpaper-box right">
           <div className="landing-wallpaper">
-            <img src="/landing_page_image.jpg" alt="Login background" />
+            <img src="https://firebasestorage.googleapis.com/v0/b/gymbuddy-d7838.firebasestorage.app/o/landing_page_image.jpg?alt=media&token=4720f348-d081-44b6-a861-26ecb33bac81" alt="Login background" />
           </div>
         </div>
       </div>

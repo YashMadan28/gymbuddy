@@ -256,7 +256,7 @@ function WorkoutLibrary() {
         variant="contained"
         color="secondary"
         sx={{ marginBottom: 2 }}
-        onClick={() => navigate("/")}
+        onClick={() => navigate("/home")}
       >
         Back
       </button>
