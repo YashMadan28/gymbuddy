@@ -1,6 +1,6 @@
+require('dotenv').config();
 const admin = require('firebase-admin');
-const path = require('path');
-const serviceAccount = require(path.join(__dirname, '../AKY/gymbuddy-d7838-firebase-admins.json')); 
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
