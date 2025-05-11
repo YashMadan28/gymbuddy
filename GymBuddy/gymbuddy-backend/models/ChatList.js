@@ -5,7 +5,8 @@ require("./Messages");
 
 const ChatListSchema = new mongoose.Schema({
   userId: { 
-    type: mongoose.Schema.Types.ObjectId, 
+    type: mongoose.Schema.Types.ObjectId,
+    // 'ProfileData' should be called 'User' instead 
     ref: "ProfileData",
     required: true 
   },
@@ -13,6 +14,7 @@ const ChatListSchema = new mongoose.Schema({
     {
       partnerId: { 
         type: mongoose.Schema.Types.ObjectId, 
+        // 'ProfileData' should be called 'User' instead
         ref: "ProfileData",
         required: true 
       },

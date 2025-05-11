@@ -41,6 +41,7 @@ const UserSchema = new mongoose.Schema({
   }
 });
 
+// 'ProfileData' should be called 'User' instead
 const User = mongoose.model('ProfileData', UserSchema, 'ProfileData');
 
 module.exports = User;
