@@ -47,7 +47,7 @@ function WorkoutLibrary() {
         <h2> Workout Splits</h2>
 
         <div
-          className="frutiger"
+          
           style={{
             display: "flex",
             gap: "10px",
@@ -64,8 +64,7 @@ function WorkoutLibrary() {
                 setActiveDay(null);
               }}
             >
-              <div className="inner" style={{ gap: "20px" }}>
-                <div className="top-white"></div>
+              <div style={{ gap: "20px" }}>
                 <span className="text">{split.name}</span>
               </div>
             </button>
@@ -73,7 +72,6 @@ function WorkoutLibrary() {
         </div>
         {activeSplit !== null && (
           <div
-            className="purpleGlow"
             style={{
               display: "flex",
               gap: "10px",
