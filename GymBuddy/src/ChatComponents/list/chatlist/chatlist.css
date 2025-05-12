@@ -1,98 +1,378 @@
+/* Root container for chat list */
 .chatlist {
-  .search {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding: 20px;
-  
-    .searchBar {
-      flex: 1;
-      background-color: rgba(50, 50, 50, 0.8);
-      backdrop-filter: blur(3px);
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      border-radius: 10px;
-      padding: 10px;
-      border: 1px solid rgba(90, 90, 90, 0.6);
-      transition: all 0.2s ease;
-  
-      input {
-        background-color: transparent;
-        border: none;
-        outline: none;
-        color: #f5f5f5;
-        flex: 1;
-        font-size: 14px;
-        &::placeholder {
-          color: rgba(245, 245, 245, 0.7);
-        }
-      }
-  
-      img {
-        width: 20px;
-        height: 20px;
-        filter: brightness(0.95);
-      }
-  
-      &:focus-within {
-        outline: 1px solid rgba(255, 255, 255, 0.7);
-        outline-offset: -1px;
-        background-color: rgba(55, 55, 55, 0.85);
-      }
-    }
+  /* --- Search bar container --- */
+  display: block;
+}
+
+/* Top search section with input and add button */
+.chatlist .search {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Search bar input wrapper */
+.chatlist .searchBar {
+  flex: 1;
+  background-color: rgba(50, 50, 50, 0.8);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-radius: 10px;
+  padding: 10px;
+  border: 1px solid rgba(90, 90, 90, 0.6);
+  transition: all 0.2s ease;
+}
+
+.chatlist .searchBar input {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  color: #f5f5f5;
+  flex: 1;
+  font-size: 14px;
+}
+
+.chatlist .searchBar input::placeholder {
+  color: rgba(245, 245, 245, 0.7);
+}
+
+.chatlist .searchBar img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0.95);
+}
+
+.chatlist .searchBar:focus-within {
+  outline: 1px solid rgba(255, 255, 255, 0.7);
+  outline-offset: -1px;
+  background-color: rgba(55, 55, 55, 0.85);
+}
+
+/* Button to open user search modal */
+.chatlist .add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 12px;
+  background-color: rgba(50, 50, 50, 0.8);
+  backdrop-filter: blur(3px);
+  border-radius: 10px;
+  border: 1px solid rgba(90, 90, 90, 0.6);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.chatlist .add img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0.95);
+}
+
+.chatlist .add:hover {
+  background-color: rgba(55, 55, 55, 0.85);
+}
+
+/* --- Individual chat item --- */
+.chatlist .item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  cursor: pointer;
+  border-bottom: 1px solid #dddddd35;
+  transition: background-color 0.2s ease, border-left 0.2s ease;
+}
+
+/* Highlight selected chat */
+.chatlist .item.active {
+  background-color: rgba(50, 50, 50, 0.6);
+  border-left: 4px solid rgba(100, 100, 100, 0.8);
+}
+
+/* Avatar and online indicator */
+.chatlist .avatar-wrapper {
+  position: relative;
+}
+
+.chatlist .avatar-wrapper img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid black;
+  margin-top: 5px;
+}
+
+.chatlist .avatar-wrapper .online-marker {
+  position: absolute;
+  bottom: 8px;
+  right: 2px;
+  width: 10px;
+  height: 10px;
+  background-color: #4caf50;
+  border-radius: 50%;
+  border: 2px solid black;
+}
+
+/* Chat text section */
+.chatlist .texts {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.chatlist .texts span {
+  font-weight: 500;
+  font-size: 18px;
+  display: block;
+}
+
+.chatlist .texts p {
+  font-size: 14px;
+  font-weight: 300;
+  margin: 0;
+}
+
+/* --- Modal overlay and content --- */
+.chatlist .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(17, 25, 40, 0.8);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.chatlist .modal-content {
+  background: linear-gradient(145deg, rgba(45, 45, 45, 0.98), rgba(35, 35, 35, 0.98));
+  border-radius: 18px;
+  width: 90%;
+  max-width: 380px;
+  color: white;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  transform: translateY(0);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+}
+
+.chatlist .modal-content:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.65);
+}
+
+/* --- Modal header --- */
+.chatlist .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 22px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.chatlist .modal-title {
+  font-size: 26px;
+  font-weight: 700;
+  background: linear-gradient(90deg, #5183fe, #6a5acd);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  letter-spacing: -0.3px;
+  margin: 0;
+}
+
+.chatlist .close-button {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 30px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  padding: 2px;
+}
+
+.chatlist .close-button:hover {
+  color: #ff6b6b;
+}
+
+/* --- Modal form --- */
+.chatlist .modal-body {
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.chatlist .modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+  width: 100%;
+}
+
+.chatlist .modal-form input {
+  padding: 14px 16px;
+  border: none;
+  border-radius: 12px;
+  background-color: rgba(80, 80, 80, 0.6);
+  color: white;
+  font-size: 15px;
+  outline: none;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.chatlist .modal-form input:focus {
+  border-color: rgba(81, 131, 254, 0.5);
+  background-color: rgba(90, 90, 90, 0.8);
+  box-shadow: 0 0 0 3px rgba(81, 131, 254, 0.2);
+}
+
+.chatlist .modal-form input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+}
+
+.chatlist .modal-form button {
+  margin-top: 6px;
+  padding: 14px;
+  background: linear-gradient(135deg, #5183fe, #3d6bd9);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 12px rgba(81, 131, 254, 0.3);
+}
+
+.chatlist .modal-form button:hover {
+  background: linear-gradient(135deg, #3d6bd9, #5183fe);
+  transform: translateY(-1px);
+  box-shadow: 0 5px 16px rgba(81, 131, 254, 0.35);
+}
+
+.chatlist .modal-form button:active {
+  transform: translateY(0);
+}
+
+/* --- Search results section --- */
+.chatlist .search-results {
+  margin-top: 14px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+/* Scrollbar styles */
+.chatlist .search-results::-webkit-scrollbar {
+  width: 5px;
+}
+
+.chatlist .search-results::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.chatlist .search-results::-webkit-scrollbar-thumb {
+  background: rgba(81, 131, 254, 0.5);
+  border-radius: 8px;
+}
+
+.chatlist .search-results::-webkit-scrollbar-thumb:hover {
+  background: rgba(81, 131, 254, 0.7);
+}
+
+/* Individual user result in modal */
+.chatlist .search-result {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgba(70, 70, 70, 0.6);
+  padding: 12px 14px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.chatlist .search-result:hover {
+  background-color: rgba(90, 90, 90, 0.8);
+  transform: translateX(3px);
+  border-color: rgba(81, 131, 254, 0.3);
+}
+
+.chatlist .search-result img {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(81, 131, 254, 0.3);
+  margin-right: 12px;
+}
+
+.chatlist .search-result span {
+  font-weight: 500;
+  font-size: 15px;
+  flex: 1;
+  text-align: left;
+}
+
+/* Empty state message */
+.chatlist .no-results {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 16px;
+  color: red;
+}
+
+/* Add user button in search results */
+.chatlist .add-user-button {
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #5183fe, #3d6bd9);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.chatlist .add-user-button:hover {
+  background: linear-gradient(135deg, #3d6bd9, #5183fe);
+  transform: translateY(-1px);
+}
+
+/* Modal fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
   }
-
-  .item {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding: 20px;
-    cursor: pointer;
-    border-bottom: 1px solid #dddddd35;
-
-    .avatar-wrapper {
-      position: relative;
-
-      img {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 4px solid black;
-        margin-top: 5px;
-      }
-
-      .online-marker {
-        position: absolute;
-        bottom: 8px;
-        right: 2px;
-        width: 10px;
-        height: 10px;
-        background-color: #4caf50;
-        border-radius: 50%;
-        border: 3px solid black;
-      }
-    }
-
-    .texts {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      justify-content: center;
-      align-items: flex-start;
-
-      span {
-        font-weight: 500;
-        font-size: 18px;
-        display: block;
-      }
-
-      p {
-        font-size: 14px;
-        font-weight: 300;
-        margin: 0;
-      }
-    }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
+
+
+
+
+
+
+
+
+

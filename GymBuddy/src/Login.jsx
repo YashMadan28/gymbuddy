@@ -11,27 +11,33 @@ const Login = () => {
   const formRef = useRef(null);
   const navigate = useNavigate();
 
+  // Handle user login
   const handleLogin = async (e) => {
     e.preventDefault();
 
     const formElement = formRef.current;
     if (!formElement) return;
 
+    // Extract email and password from form
     const formData = new FormData(formElement);
     const { email, password } = Object.fromEntries(formData.entries());
 
     try {
+      // Attempt login via Firebase Authentication
       const res = await signInWithEmailAndPassword(auth, email, password);
       console.log("User signed in:", res.user);
-      
+
+      // Show success message, navigate home after a short delay
       toast.success("Logged in successfully!", {
         position: "top-right",
         autoClose: 1000,
         onClose: () => navigate("/")
       });
 
+      // Reset the form
       formElement.reset();
     } catch (err) {
+      // Handle login failure and display error message
       console.error(err);
       toast.error(err.message, {
         position: "top-right",
@@ -41,11 +47,15 @@ const Login = () => {
   };
 
   return (
+    // Main layout container
     <div className="landing-page-container">
+      {/* Toast notification container */}
       <ToastContainer />
+
       <div id="app" className="h-100">
         <div className="landing-wrapper animation left">
           <div className="landing-wrapper-inner">
+            {/* Header section */}
             <header className="header-container">
               <h2 className="title animation a1">
                 Welcome to GymBuddy!
@@ -66,8 +76,11 @@ const Login = () => {
                 </svg>
               </div>
             </header>
+
+            {/* Login form */}
             <div className="main-form">
               <form ref={formRef} onSubmit={handleLogin}>
+                {/* Email input */}
                 <div className="form-group icon-input animation a3">
                   <FaUser className="input-icon" />
                   <input
@@ -78,6 +91,8 @@ const Login = () => {
                     required
                   />
                 </div>
+
+                {/* Password input */}
                 <div className="form-group icon-input animation a4">
                   <FaLock className="input-icon" />
                   <input
@@ -88,12 +103,16 @@ const Login = () => {
                     required
                   />
                 </div>
+
+                {/* Submit button */}
                 <input 
                   type="submit" 
                   name="login" 
                   value="Login" 
                   className="btn-submit animation a5" 
                 />
+
+                {/* Navigation links */}
                 <div className="auth-options">
                   <p className="auth-text animation a6">
                     Don't have an account? <a href="/signup" className="auth-link">Sign up</a>
@@ -106,6 +125,8 @@ const Login = () => {
             </div>
           </div>
         </div>
+
+        {/* Right-side background image */}
         <div className="landing-wallpaper-box right">
           <div className="landing-wallpaper">
             <img src="/landing_page_image.jpg" alt="Login background" />
@@ -117,4 +138,5 @@ const Login = () => {
 };
 
 export default Login;
+
 

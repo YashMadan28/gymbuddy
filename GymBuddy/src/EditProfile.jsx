@@ -5,22 +5,23 @@ import { useNavigate, useLocation } from "react-router-dom";
 import default_image from "./assets/default_image.jpg";
 import EditGymPopup from './EditGymPopup';
 import { updateUserProfile, fetchUserProfile } from './services/profile-api';
+import axios from './services/axios';
 import "./editprofile.css";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const EditProfile = () => {
-  // Navigation and state management hooks
+  // Navigation and routing
   const navigate = useNavigate();
   const location = useLocation();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const storage = getStorage();
+
+  // Refs and UI state
   const fileInputRef = useRef(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedImageFile, setSelectedImageFile] = useState(null);
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Profile data state with default values
+  // Editable profile state
   const [editedProfile, setEditedProfile] = useState({
     name: '',
     age: '',
@@ -28,10 +29,9 @@ const EditProfile = () => {
     gym: '',
     about: '',
     profilePicture: default_image,
-    gymPlaceId: ''
   });
 
-  // Gender options for dropdown
+  // Gender select dropdown options
   const genderOptions = [
     { value: 'Male', label: 'Male' },
     { value: 'Female', label: 'Female' },
@@ -39,11 +39,10 @@ const EditProfile = () => {
     { value: 'Prefer not to say', label: 'Prefer not to say' }
   ];
 
-  // Load profile data on component mount
+  // Load profile data
   useEffect(() => {
     const loadProfileData = async () => {
       try {
-        // Get profile data from navigation state or API
         const data = location.state?.profileData || await fetchUserProfile();
         setEditedProfile({
           name: data?.name || '',
@@ -52,7 +51,6 @@ const EditProfile = () => {
           gym: data?.gym?.display || data?.gym || '',
           about: data?.about || '',
           profilePicture: data?.profilePicture || default_image,
-          gymPlaceId: data?.gym?.place_id || ''
         });
       } catch (error) {
         console.error('Error loading profile:', error);
@@ -63,7 +61,7 @@ const EditProfile = () => {
     loadProfileData();
   }, [location.state, navigate]);
 
-  // Handle saving profile changes
+  // Save profile data to backend
   const handleSaveChanges = async () => {
     setFormSubmitted(true);
 
@@ -71,45 +69,53 @@ const EditProfile = () => {
       setLoading(true);
       setError(null);
 
-      // Validate user authentication
       if (!auth.currentUser) {
         throw new Error('No authenticated user found');
       }
 
-      // Validate required fields
+      // Validation
       if (!editedProfile.name?.trim()) {
         setError('Name is required');
         return;
       }
+
       if (isNaN(editedProfile.age) || editedProfile.age < 13 || editedProfile.age > 120) {
         setError('Age must be between 13 and 120');
         return;
       }
 
-      // Handle image upload if new image selected
       let profilePictureURL = editedProfile.profilePicture;
+
+      // Upload image if new file was selected
       if (selectedImageFile) {
-        const imageRef = ref(storage, `profile_images/${auth.currentUser.uid}/${selectedImageFile.name}`);
-        await uploadBytes(imageRef, selectedImageFile);
-        profilePictureURL = await getDownloadURL(imageRef);
+        const formData = new FormData();
+        formData.append("profileImage", selectedImageFile);
+
+        const uploadRes = await axios.post(`/api/users/${auth.currentUser.uid}/upload`, formData, {
+          headers: { "Content-Type": "multipart/form-data" }
+        });
+
+        profilePictureURL = uploadRes.data.imageUrl;
       }
 
-      // Prepare updated profile data
+      // Prepare updated profile payload
       const updatedData = {
         name: editedProfile.name,
         age: parseInt(editedProfile.age),
         gender: editedProfile.gender,
         gym: {
-          display: editedProfile.gym,
-          place_id: editedProfile.gymPlaceId
+          display: editedProfile.gym?.trim()
         },
         about: editedProfile.about,
         profilePicture: profilePictureURL
       };
 
-      // Update profile and navigate back
+      // Send update request
       await updateUserProfile(auth.currentUser.uid, updatedData);
+
+      // Navigate to profile view with updated data
       navigate("/profile", { state: { profileData: updatedData }, replace: true });
+
     } catch (error) {
       console.error('Error saving profile:', error);
       setError(error.message || 'Failed to save changes');
@@ -118,82 +124,62 @@ const EditProfile = () => {
     }
   };
 
-  // Handle profile picture upload
+  // Trigger file input click
   const handleButtonClick = () => {
     fileInputRef.current.click();
   };
 
+  // Handle profile picture file selection
   const handlePictureChange = (event) => {
     const file = event.target.files[0];
     if (file) {
       setSelectedImageFile(file);
       const previewURL = URL.createObjectURL(file);
-      setEditedProfile(prev => ({ 
-        ...prev, 
-        profilePicture: previewURL 
-      }));
+      setEditedProfile(prev => ({ ...prev, profilePicture: previewURL }));
     }
   };
 
-  // Handle gym selection from popup
+  // Save selected gym from popup
   const handleSaveGym = (selectedGym) => {
     setEditedProfile(prev => ({
       ...prev,
       gym: `${selectedGym.gymName}, ${selectedGym.address}`,
-      gymPlaceId: selectedGym.place_id
     }));
     setEditDialogOpen(false);
   };
 
-  // Generic input change handler
+  // Update individual form fields
   const handleInputChange = (field, value) => {
-    setEditedProfile(prev => ({
-      ...prev,
-      [field]: value,
-    }));
+    setEditedProfile(prev => ({ ...prev, [field]: value }));
   };
 
-  // Navigation back to profile
+  // Navigate back without saving
   const handleBackClick = () => {
     navigate("/profile", { replace: true });
   };
 
-  // Styling for form fields
+  // Reusable styles for form fields
   const fieldStyle = {
     marginTop: 2,
     "& .MuiInputLabel-root": {
       color: "rgba(255, 255, 255, 0.6)",
-      "&.Mui-focused": {
-        color: "rgba(255, 255, 255, 0.8)"
-      },
+      "&.Mui-focused": { color: "rgba(255, 255, 255, 0.8)" }
     },
     "& .MuiOutlinedInput-root": {
       color: "white",
-      "& fieldset": {
-        borderColor: "rgba(255, 255, 255, 0.5)",
-      },
-      "&:hover fieldset": {
-        borderColor: "rgba(255, 255, 255, 0.7)",
-        borderWidth: "1px",
-      },
-      "&.Mui-focused fieldset": {
-        borderColor: "rgba(255, 255, 255, 0.9) !important",
-        borderWidth: "2px",
-      },
+      "& fieldset": { borderColor: "rgba(255, 255, 255, 0.5)" },
+      "&:hover fieldset": { borderColor: "rgba(255, 255, 255, 0.7)", borderWidth: "1px" },
+      "&.Mui-focused fieldset": { borderColor: "rgba(255, 255, 255, 0.9)", borderWidth: "2px" }
     },
-    "& .MuiInputBase-input::placeholder": {
-      color: "rgba(255, 255, 255, 0.4)",
-    },
-    "& .MuiFormHelperText-root": {
-      color: "white !important",
-    },
+    "& .MuiInputBase-input::placeholder": { color: "rgba(255, 255, 255, 0.4)" },
+    "& .MuiFormHelperText-root": { color: "white !important" }
   };
 
   return (
     <Box sx={{ justifyContent: "center", maxWidth: 500, margin: "auto", padding: 3, color: "white" }}>
       <Toolbar />
 
-      {/* Profile picture section */}
+      {/* Profile picture preview */}
       <div className="image-container">
         <img
           src={editedProfile.profilePicture}
@@ -227,7 +213,7 @@ const EditProfile = () => {
         </Button>
       </div>
 
-      {/* Profile form fields */}
+      {/* Name input */}
       <TextField
         label="Name"
         variant="outlined"
@@ -239,6 +225,7 @@ const EditProfile = () => {
         helperText={formSubmitted && !editedProfile.name?.trim() ? "Name is required" : ""}
       />
 
+      {/* Age input */}
       <TextField
         label="Age"
         variant="outlined"
@@ -250,7 +237,7 @@ const EditProfile = () => {
         helperText={formSubmitted && (isNaN(editedProfile.age) || editedProfile.age < 13 || editedProfile.age > 120) ? "Age must be between 13 and 120" : ""}
       />
 
-      {/* Gender dropdown */}
+      {/* Gender select input */}
       <FormControl fullWidth sx={fieldStyle}>
         <InputLabel id="gender-label">Gender</InputLabel>
         <Select
@@ -268,7 +255,7 @@ const EditProfile = () => {
         </Select>
       </FormControl>
 
-      {/* Gym field with popup */}
+      {/* Gym field (when clicked, will open gym search popup) */}
       <TextField
         label="Gym"
         variant="outlined"
@@ -279,7 +266,7 @@ const EditProfile = () => {
         inputProps={{ readOnly: true }}
       />
 
-      {/* Gym selection popup */}
+      {/* Gym search popup */}
       <EditGymPopup
         open={editDialogOpen}
         onClose={() => setEditDialogOpen(false)}
@@ -291,7 +278,7 @@ const EditProfile = () => {
         }}
       />
 
-      {/* About me textarea */}
+      {/* About Me textbox */}
       <TextField
         label="About Me"
         variant="outlined"
@@ -303,7 +290,7 @@ const EditProfile = () => {
         rows={4}
       />
 
-      {/* Save changes button */}
+      {/* Save button */}
       <div className="profileView">
         <Button
           variant="contained"
@@ -316,17 +303,10 @@ const EditProfile = () => {
         </Button>
       </div>
 
-      {/* Error display */}
+      {/* Error message display */}
       {error && <Typography color="error" sx={{ mt: 2 }}>{error}</Typography>}
     </Box>
   );
 };
 
 export default EditProfile;
-
-
-
-
-
-
-

@@ -5,10 +5,10 @@
 }
 
 .profile-image {
-  width: 250px; /* Set a larger width */
-  height: 250px; /* Set a larger height */
-  object-fit: cover; /* Ensures the image covers the container while preserving its aspect ratio */
-  border-radius: 50%; /* Makes the image circular */
+  width: 250px;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 50%;
   border: 5px solid black;
   margin-top: 20px;
 }
