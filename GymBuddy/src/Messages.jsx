@@ -59,6 +59,9 @@ const Messages = () => {
         } catch (err) {
           console.error("Error fetching current user:", err);
         }
+      } else {
+        alert("Please log in to continue.");
+        window.location.href = "/home";
       }
     });
 

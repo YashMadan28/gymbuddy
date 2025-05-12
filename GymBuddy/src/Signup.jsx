@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { FaUser, FaLock, FaEnvelope } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
@@ -177,7 +177,7 @@ const Signup = () => {
                 {/* Link to login page */}
                 <div className="auth-options">
                   <p className="auth-text animation a7">
-                    Already have an account? <a href="/login" className="auth-link">Log In</a>
+                    Already have an account? <Link to="/login" className="auth-link">Log In</Link>
                   </p>
                 </div>
               </form>
@@ -188,7 +188,7 @@ const Signup = () => {
         {/* Right-side background image section */}
         <div className="landing-wallpaper-box right">
           <div className="landing-wallpaper">
-            <img src="/landing_page_image.jpg" alt="Signup background" />
+            <img src="https://firebasestorage.googleapis.com/v0/b/gymbuddy-d7838.firebasestorage.app/o/landing_page_image.jpg?alt=media&token=4720f348-d081-44b6-a861-26ecb33bac81" alt="Signup background" />
           </div>
         </div>
       </div>

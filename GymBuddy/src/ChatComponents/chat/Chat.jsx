@@ -154,7 +154,7 @@ const Chat = ({ selectedUser, messages, onSendMessage, currentUserId }) => {
           {/* Emoji toggle button */}
           <div className="emoji">
             <img
-              src="./emoji.png"
+              src="https://firebasestorage.googleapis.com/v0/b/gymbuddy-d7838.firebasestorage.app/o/emoji.png?alt=media&token=f2689254-1208-4787-8f57-885b481ebaaa"
               alt="emoji"
               onClick={() => setOpen((prev) => !prev)}
             />

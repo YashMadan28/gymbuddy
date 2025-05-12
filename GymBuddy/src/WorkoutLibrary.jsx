@@ -3,102 +3,13 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { auth } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import { workoutData } from './workoutData';
 import "./animations.css";
 
 // Navigation link to Workout Library
 <Link to="/workout_library">
   <button>Workout Library</button>
 </Link>;
-
-// Static workout data for splits and muscle groups
-const workoutData = {
-  splits: [
-    {
-      name: "Upper/Lower Split",
-      days: [
-        {
-          dayName: "Day 1: Upper Body",
-          focus: "Chest, Shoulders, Triceps",
-          exercises: ["Bench Press", "Overhead Press", "Tricep Pushdowns"],
-        },
-        {
-          dayName: "Day 2: Lower Body",
-          focus: "Legs, Glutes",
-          exercises: ["Squats", "Deadlifts", "Leg Press"],
-        },
-      ],
-    },
-    {
-      name: "Push/Pull/Legs Split",
-      days: [
-        {
-          dayName: "Push Day",
-          focus: "Chest, Shoulders, Triceps",
-          exercises: [
-            "Bench Press",
-            "Dumbell Fly",
-            "Incline Bench Press",
-            "Shoulder Press",
-            "Tricep Extensions",
-          ],
-        },
-        {
-          dayName: "Pull Day",
-          focus: "Chest Shoulders, Triceps",
-          exercises: [
-            "Incline Dumbbell Press",
-            "Lat Pulldown",
-            "Cable Crossovers",
-            "Bicep Curls",
-            "Deadlift",
-          ],
-        },
-        {
-          dayName: "Leg Day",
-          focus: "Quads, Hamstrings, Glutes",
-          exercises: ["Leg Extentions", "Romanian Deadlifts", "Calf Raises"],
-        },
-      ],
-    },
-  ],
-  muscleGroups: [
-    {
-      groupName: "Chest",
-      exercises: [
-        "Push-ups",
-        "Cable Flyes",
-        "Dumbbell Press",
-        "Decline Bench Press",
-      ],
-    },
-    {
-      groupName: "Back",
-      exercises: ["Pull-ups", "Lat Pulldowns", "Face Pulls", "Deadlifts"],
-    },
-    {
-      groupName: "Legs",
-      exercises: ["Leg Extensions", "Leg Press", "Walking Lunges", "Squats"],
-    },
-    {
-      groupName: "Shoulders",
-      exercises: [
-        "Dumbell Lateral Raise",
-        "Dumbell Shoulder Press",
-        "Face Pull",
-        "Rear Delt Flys",
-      ],
-    },
-    {
-      groupName: "Arms",
-      exercises: [
-        "Hammer Curl",
-        "Cable Curl",
-        "Tricep Pulldown",
-        "Skull Crushers",
-      ],
-    },
-  ],
-};
 
 function WorkoutLibrary() {
   // Track selected split, day, and muscle group
@@ -142,7 +53,7 @@ function WorkoutLibrary() {
 
         {/* Render split selection buttons */}
         <div
-          className="frutiger"
+          
           style={{
             display: "flex",
             gap: "10px",
@@ -159,8 +70,7 @@ function WorkoutLibrary() {
                 setActiveDay(null); // Reset day selection on new split
               }}
             >
-              <div className="inner" style={{ gap: "20px" }}>
-                <div className="top-white"></div>
+              <div style={{ gap: "20px" }}>
                 <span className="text">{split.name}</span>
               </div>
             </button>
@@ -170,7 +80,6 @@ function WorkoutLibrary() {
         {/* Render days for selected split */}
         {activeSplit !== null && (
           <div
-            className="purpleGlow"
             style={{
               display: "flex",
               gap: "10px",
@@ -256,7 +165,7 @@ function WorkoutLibrary() {
         variant="contained"
         color="secondary"
         sx={{ marginBottom: 2 }}
-        onClick={() => navigate("/")}
+        onClick={() => navigate("/home")}
       >
         Back
       </button>

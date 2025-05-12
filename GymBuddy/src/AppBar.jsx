@@ -25,6 +25,52 @@ const Header = () => {
       console.error('Error logging out:', error);
     }
   };
+  const SIZES = {
+    HEADER_HEIGHT: "90px",
+    HEADER_PADDING: "13px",
+    TITLE_FONT: "30px",
+    BUTTON_FONT: "17px",
+    LETTER_SPACING: "4px"
+  };
+
+  const styles = {
+    box: {
+      display: "flex",
+      flexGrow: 0
+    },
+    commonButton: {
+      padding: "10px 20px",
+      border: "none",
+      marginLeft: "auto",
+      justifyContent: "right",
+      fontSize: SIZES.BUTTON_FONT,
+      color: "#fff",
+      borderRadius: "7px",
+      letterSpacing: "4px",
+      fontWeight: 700,
+      textTransform: "uppercase",
+      transition: "box-shadow 0.5s, background-color 0.5s",
+      backgroundColor: "rgb(0, 0, 0)",
+      boxShadow: "0 0 25px rgb(0, 0, 0)",
+      "&:hover": {
+        boxShadow:
+          "0 0 5px rgb(0, 140, 255), 00 00px rgb(0, 255, 26), 0 0 50px rgb(0,140,255), 0 0 100px rgb(0,140,255)",
+        background: "rgb(0, 140, 255)",
+      },
+    },
+    appBar: {
+      width: "100%",
+      backgroundColor: "black",
+      height: SIZES.HEADER_HEIGHT,
+      boxShadow: "none",
+    },
+    toolbar: {
+      display: "flex",
+      justifyContent: "center",
+      paddingTop: SIZES.HEADER_PADDING,
+      alignItems: "center",
+    }
+  };
   
   return (
     <AppBar

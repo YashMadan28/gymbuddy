@@ -138,7 +138,7 @@ const Profile = () => {
         <Button
           variant="contained"
           sx={{ mb: 2, mt: 3 }}
-          onClick={() => navigate(isOwnProfile ? '/' : -1)}
+          onClick={() => navigate(isOwnProfile ? '/home' : -1)}
         >
           Back
         </Button>
