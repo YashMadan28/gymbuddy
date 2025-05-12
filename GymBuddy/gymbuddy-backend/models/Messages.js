@@ -2,13 +2,15 @@ const mongoose = require('mongoose');
 
 const MessagesSchema = new mongoose.Schema({
   sender: { 
-    type: mongoose.Schema.Types.ObjectId, 
+    type: mongoose.Schema.Types.ObjectId,
+    // 'ProfileData' should be called 'User' instead 
     ref: 'ProfileData',
     required: true,
     index: true
   },
   receiver: { 
-    type: mongoose.Schema.Types.ObjectId, 
+    type: mongoose.Schema.Types.ObjectId,
+    // 'ProfileData' should be called 'User' instead 
     ref: 'ProfileData', 
     required: true,
     index: true

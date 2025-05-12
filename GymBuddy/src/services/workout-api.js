@@ -1,6 +1,7 @@
 import { auth } from '../firebase';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = `${import.meta.env.VITE_BACKEND_URL}/api`;
+
 
 /**
  * Fetches the current user's workout data from the backend.

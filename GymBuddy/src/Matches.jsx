@@ -37,7 +37,8 @@ function Matches() {
         const auth = getAuth();
         const firebaseUser = auth.currentUser;
         if (!firebaseUser) {
-          navigate('/login');
+          alert("Please log in to continue.");
+          navigate("/home");
           return;
         }
 
@@ -277,36 +278,3 @@ function Matches() {
 }
 
 export default Matches;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

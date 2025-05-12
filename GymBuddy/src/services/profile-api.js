@@ -20,7 +20,7 @@ export const updateUserProfile = async (firebaseUid, profileData) => {
     const token = await user.getIdToken();
 
     // Send PUT request to update user profile
-    const response = await fetch(`http://localhost:5000/api/users/${firebaseUid}`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users/${firebaseUid}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ export const fetchUserProfile = async () => {
     const token = await user.getIdToken();
 
     const response = await fetch(
-      `http://localhost:5000/api/users/${user.uid}`,
+      `${import.meta.env.VITE_BACKEND_URL}/api/users/${user.uid}`,
       {
         headers: { 'Authorization': `Bearer ${token}` }
       }
@@ -104,7 +104,7 @@ export const fetchOtherUserProfile = async (userId) => {
     const token = await user.getIdToken();
 
     const response = await fetch(
-      `http://localhost:5000/api/users/${userId}/public`,
+      `${import.meta.env.VITE_BACKEND_URL}/api/users/${userId}/public`,
       {
         headers: { 'Authorization': `Bearer ${token}` }
       }
@@ -141,7 +141,7 @@ export const createUserProfile = async (name) => {
     const user = auth.currentUser;
     if (!user) throw new Error('No authenticated user');
 
-    const response = await fetch(`http://localhost:5000/api/users`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -179,7 +179,7 @@ export const fetchUsersByGym = async ({ gym_display }) => {
     const token = await user.getIdToken();
 
     // Construct full URL with query param
-    const url = `http://localhost:5000/api/users/by-gym?gym_display=${encodeURIComponent(gym_display)}`;
+    const url = `${import.meta.env.VITE_BACKEND_URL}/api/users/by-gym?gym_display=${encodeURIComponent(gym_display)}`;
 
     const response = await fetch(url, {
       headers: {
@@ -199,7 +199,4 @@ export const fetchUsersByGym = async ({ gym_display }) => {
     return { success: false, data: [], message: error.message };
   }
 };
-
-
-
 

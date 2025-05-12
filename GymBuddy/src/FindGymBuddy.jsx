@@ -238,7 +238,7 @@ const FindGymBuddy = () => {
 
             {/* Form buttons */}
             <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, marginTop: '10px' }}>
-              <Button variant="contained" color="secondary" onClick={() => navigate('/')}>
+              <Button variant="contained" color="secondary" onClick={() => navigate('/home')}>
                 Back
               </Button>
               <Button type="submit" variant="contained" color="primary">
